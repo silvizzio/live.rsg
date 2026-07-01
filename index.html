@@ -210,6 +210,56 @@
   .cctv-pag .pg{border:1px solid var(--line2);border-radius:5px;padding:3px 8px;cursor:pointer}
   .cctv-pag .pg.on{background:rgba(127,209,196,.16);border-color:var(--accent);color:var(--ink)}
 
+  /* ENV LOD3 blocks */
+  .env-mon{margin-bottom:4px}
+  .aqi-row{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+  .aqi-gauge{width:44px;height:44px;border-radius:50%;border:3px solid var(--line2);border-top-color:var(--watch);border-right-color:var(--watch);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);flex:none}
+  .aqi-main .v{font-size:26px;font-weight:600;line-height:1}
+  .aqi-main .n{font-size:9.5px;color:var(--muted);margin-top:2px}
+  .aqi-chips{display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:4px}
+  .aqi-chips .c{font-size:10px;color:var(--muted)} .aqi-chips .c b{color:var(--ink);font-weight:600;margin-left:3px}
+  .wind-row{display:flex;align-items:center;gap:12px;margin:10px 0}
+  .wind-gauge{width:40px;height:40px;border-radius:50%;border:3px solid var(--line2);border-bottom-color:var(--accent);flex:none}
+  .wind-main .v{font-size:22px;font-weight:600;line-height:1}
+  .wind-main .v small{font-size:11px;color:var(--muted);font-weight:400}
+  .wind-main .n{font-size:9.5px;color:var(--muted);margin-top:2px}
+  .wq-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .wq-badge{font-size:8.5px;letter-spacing:.6px;font-weight:600;border-radius:5px;padding:2px 7px;background:rgba(67,192,138,.16);color:var(--safe)}
+  .wq-table .r{display:flex;font-size:11px;padding:3px 0}
+  .wq-table .r .k{color:var(--ink);flex:1;font-weight:500}
+  .wq-table .r .n{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;min-width:56px}
+  .wq-table .r .u{color:var(--muted);min-width:40px;text-align:right;font-size:9.5px}
+  .safety-thumb{position:relative;border:1px solid var(--line2);border-radius:8px;overflow:hidden;aspect-ratio:16/8;background:linear-gradient(135deg,#12202a,#0e1a20);margin-bottom:4px}
+  .safety-thumb .frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(231,238,242,.12);font-size:22px}
+  .safety-thumb .live{position:absolute;left:7px;top:6px;font-size:8px;letter-spacing:.6px;color:var(--risk);font-weight:700}
+  .safety-thumb .meta{position:absolute;left:7px;bottom:6px}
+  .safety-thumb .meta .nm{font-size:9.5px;color:var(--ink)} .safety-thumb .meta .cd{font-size:8px;color:var(--muted)}
+  .viol-head{display:flex;justify-content:space-between;align-items:center}
+  .viol-head .cnt{font-size:9px;background:var(--chip);border-radius:10px;padding:1px 7px;color:var(--muted)}
+  .viol-row{border:1px solid var(--line);border-radius:7px;padding:8px 9px;margin-top:6px}
+  .viol-chip{font-size:8.5px;letter-spacing:.5px;font-weight:600;border-radius:5px;padding:2px 7px;background:rgba(229,101,75,.16);color:var(--risk)}
+  .viol-row .vt{font-size:11px;color:var(--ink);margin-top:6px;display:flex;justify-content:space-between}
+  .viol-row .vs{font-size:9.5px;color:var(--muted);margin-top:1px}
+  .bms-table .r{display:flex;font-size:11px;padding:3px 0}
+  .bms-table .r .k{color:var(--ink);flex:1} .bms-table .r .n{color:var(--muted);font-variant-numeric:tabular-nums}
+  .lp-note{font-size:8.5px;color:var(--muted);margin-bottom:8px;font-style:italic}
+  /* upgraded action card */
+  .alertcard{max-width:300px;text-align:left;padding:13px 15px}
+  .alertcard .ah{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .alertcard .ah .badge{font-size:8.5px;font-weight:700;border-radius:5px;padding:2px 7px;background:rgba(229,101,75,.9);color:#fff}
+  .alertcard.watch .ah .badge{background:rgba(224,169,60,.95);color:#0c1418}
+  .alertcard .atitle{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:10px}
+  .alertcard .acam{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:16/9;background:linear-gradient(135deg,#14212b,#0e1a20);margin-bottom:9px}
+  .alertcard .acam .frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(231,238,242,.12);font-size:22px}
+  .alertcard .acam .live{position:absolute;left:8px;top:7px;font-size:8px;letter-spacing:.6px;color:var(--risk);font-weight:700}
+  .alertcard .acam .m{position:absolute;left:8px;bottom:7px;font-size:8.5px;color:var(--ink)}
+  .alertcard .acam .ts{position:absolute;right:8px;bottom:7px;font-size:8px;color:var(--muted)}
+  .alertcard .adesc{font-size:11px;color:var(--muted);line-height:1.45;margin-bottom:11px}
+  .alertcard .abtns{display:flex;gap:8px}
+  .alertcard .abtn{flex:1;text-align:center;font-size:11px;padding:8px;border-radius:7px;cursor:pointer}
+  .alertcard .abtn.primary{background:#8a6a2e;color:#fff;font-weight:600}
+  .alertcard .abtn.ghost{border:1px solid var(--line2);color:var(--ink)}
+
   .note{font-size:9.5px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);margin-top:11px;padding-top:9px}
   .hidden{display:none!important}
 </style>
@@ -461,31 +511,32 @@ const P = {
       }
     },
     sites:{
-      "Lagoon East":{
+      "Shura Marina":{
         window:["Now","Monthly","Yearly"],
-        left:[
-          {sect:"Conditions",blocks:[
-            {t:"big",l:"Colour index",v:"81",u:"vs 94 baseline",s:["probe LG-04 confirms","down"]},
-            {t:"pair",items:[["Turbidity","3.1","NTU"],["Dissolved O2","91","%"]]},
-            {t:"pair",items:[["pH","8.02",""],["Air quality","Nominal",""]]}
-          ]},
-          {sect:"Monitoring",blocks:[
-            {t:"list",lt:"Asset status",rows:[["Probe LG-04","Offline 6m"],["Reef cam RB-01","Degraded"],["Reporting","41 of 43"]]}
-          ]},
-          {sect:"Sustainability, this asset",blocks:[
-            {t:"sustain",cards:[["Electricity","428,000 kWh","down 6%","down"],["Renewable share","82%","up 4 pts","up"],["Energy intensity","47 kWh/rm-night","down 5%","down"],["Water use","3,940 m3","down 3%","down"],["Water intensity","430 L/guest-night","down 2%","down"],["Waste diverted","68%","up 7 pts","up"],["Est. CO2","61 t","down 9%","down"]]}
-          ]}
-        ],
-        alert:{lvl:"watch",t:"Water anomaly",s:"Colour index down to 81, send marine team"},
-        camLoc:"Lagoon East", camCount:"38 cameras",
-        featured:["Lagoon East","RB-01"],
-        cams:[["Reef Cam RB-01","RB-01"],["Reef Cam RB-02","RB-02"],["Water Station","WS-03"],["Shoreline","SH-04"],["Buoy LG-04","LG-04"],["Restricted Zone","RZ-05"],["Beach North","BN-06"],["Pier","PR-07"],["Air Station","AS-08"],["Wind Mast","WM-09"],["Lagoon West","LW-10"],["Reef Edge","RE-11"]]
+        envMon:{
+          aqi:{v:"88",note:"Moderate &middot; USAQI &middot; &micro;g/m&sup3;",chips:[["PM2.5","19"],["PM10","52"],["NO&#8322;","34"],["O&#8323;","46"],["SO&#8322;","8"],["CO","380"]]},
+          wind:{v:"3.6",u:"m/s",dir:"308&deg; NW"},
+          water:{badge:"GOOD",rows:[["Turbidity","1.8","NTU"],["pH","8.04",""],["Dissolved O&#8322;","96","%"],["Chlorophyll A","0.4","&micro;g/l"],["Blue/Green Algae","0.2","&micro;g/l"],["TDS","39,400","mg/l"]]}
+        },
+        sustain:{
+          Now:{note:"Live rate, today so far",cards:[["Electricity","342 kW","14,200 kWh today","down"],["Water","4.2 m3/h","132 m3 today","down"],["Renewable share","83%","live mix","up"],["Est. CO2","2.1 t","today","down"]]},
+          Monthly:{note:"Month to date vs last month",cards:[["Electricity","428,000 kWh","down 6%","down"],["Renewable share","82%","up 4 pts","up"],["Energy intensity","47 kWh/rm-night","down 5%","down"],["Water use","3,940 m3","down 3%","down"],["Water intensity","430 L/guest-night","down 2%","down"],["Waste diverted","68%","up 7 pts","up"],["Est. CO2","61 t","down 9%","down"]]},
+          Yearly:{note:"Year to date vs last year",cards:[["Electricity","4.92M kWh","down 8%","down"],["Renewable share","80%","up 6 pts","up"],["Energy intensity","49 kWh/rm-night","down 7%","down"],["Water use","46,800 m3","down 5%","down"],["Water intensity","442 L/guest-night","down 4%","down"],["Waste diverted","66%","up 9 pts","up"],["Est. CO2","742 t","down 11%","down"]]}
+        },
+        bms:{note:"Building systems, dummy placeholder",rows:[["Floor temperature","22.3","&deg;C"],["HVAC setpoint","23.0","&deg;C"],["District cooling load","68","%"],["Occupancy","Moderate",""]]},
+        safetyCam:["Spine Corridor","ML-01 &middot; 192.168.1.105"],
+        violations:[["Unauthorized swimming","11:42","Shebara restricted reef"]],
+        violationCount:"1",
+        alert:{lvl:"watch",badge:"WATER ANOMALY",t:"Dispatch marine team to Lagoon East, water anomaly",cam:["Lagoon East","LE-05 &middot; 192.168.1.105","15/05/2026, 15:48 AST"],desc:"Color index 81 from 94 baseline, probe LG-04 confirms, AQI and wind nominal."},
+        camLoc:"Marina", camCount:"92 cameras",
+        featured:["Marina","CA-01"],
+        cams:[["Spine Corridor","ML-01"],["Marina Promenade","IB-03"],["Tower Apex, L8","IO-04"],["Pool Bay, L2","P-05"],["Lagoon East","LE-11"],["Reception Court","TB-03"],["Links Gym, L1","SLG-08"],["Main Pool, L2","MPD-09"],["SLS Porte, GF","SLS-E-10"],["Beach Lounge, GF","BL-11"],["Causeway Mid, GF","CS-15"],["Bridge IB, GF","BI-16"]]
       }
     },
     places:[
-      {name:"Shura Marina",x:300,y:300,sev:"med",area:"Lagoon East District",site:"Lagoon East"},
-      {name:"SLS Red Sea",x:520,y:250,sev:"crit",area:"Lagoon East District",site:"Lagoon East"},
-      {name:"Lagoon East",x:600,y:360,sev:"med",area:"Lagoon East District",site:"Lagoon East"}
+      {name:"Shura Marina",x:300,y:300,sev:"med",area:"Lagoon East District",site:"Shura Marina"},
+      {name:"SLS Red Sea",x:520,y:250,sev:"crit",area:"Lagoon East District",site:"Shura Marina"},
+      {name:"Lagoon East",x:600,y:360,sev:"med",area:"Lagoon East District",site:"Shura Marina"}
     ]
   },
 
@@ -592,10 +643,23 @@ function renderMap(){
   } else sl.innerHTML="";
   // alert card at LOD3
   if(lod===3){
-    const site=cfg.sites[cfg.places[placeIdx].site];
-    if(site&&site.alert){
-      $("alertCard").className="alertcard "+(site.alert.lvl==="watch"?"watch":"");
-      $("alertCard").innerHTML=`<div class="lvl">${site.alert.lvl==="crit"?"Critical":"Watch"}</div><div class="t">${site.alert.t}</div><div class="s">${site.alert.s}</div>`;
+    const site=cfg.sites[cfg.places[placeIdx].site], a=site&&site.alert;
+    if(a){
+      $("alertCard").className="alertcard "+(a.lvl==="watch"?"watch":"");
+      if(a.cam){
+        // full recommended-action card (ENV screenshot style)
+        $("alertCard").innerHTML=
+          `<div class="ah">Recommended Action <span class="badge">${a.badge}</span>`+
+          `<span style="margin-left:auto;cursor:pointer">&times;</span></div>`+
+          `<div class="atitle">${a.t}</div>`+
+          `<div class="acam"><div class="frame">&#9673;</div><div class="live">LIVE</div>`+
+          `<div class="m">${a.cam[0]}<br><span style="color:var(--muted);font-size:8px">${a.cam[1]}</span></div>`+
+          `<div class="ts">${a.cam[2]}</div></div>`+
+          `<div class="adesc">${a.desc}</div>`+
+          `<div class="abtns"><div class="abtn primary">Dispatch</div><div class="abtn ghost">Remind me later</div></div>`;
+      } else {
+        $("alertCard").innerHTML=`<div class="lvl">${a.lvl==="crit"?"Critical":"Watch"}</div><div class="t">${a.t}</div><div class="s">${a.s}</div>`;
+      }
     }
   }
 }
@@ -658,17 +722,58 @@ function lpBlock(b){
   return "";
 }
 
+let awIdx=0;
+
+function envMonHtml(site){
+  const m=site.envMon;
+  let h=`<div class="lp-sect">Environmental Monitoring</div><div class="env-mon">`;
+  h+=`<div class="aqi-row"><div class="aqi-gauge">&#8776;</div><div class="aqi-main"><div class="v">${m.aqi.v}</div><div class="n">Air Quality Index &middot; ${m.aqi.note}</div></div></div>`;
+  h+=`<div class="aqi-chips">`+m.aqi.chips.map(([k,v])=>`<span class="c">${k}<b>${v}</b></span>`).join("")+`</div>`;
+  h+=`<div class="wind-row"><div class="wind-gauge"></div><div class="wind-main"><div class="v">${m.wind.v} <small>${m.wind.u}</small></div><div class="n">Wind Speed &middot; ${m.wind.dir}</div></div></div>`;
+  h+=`<div class="wq-head"><span style="font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)">Water Quality / Color Index</span><span class="wq-badge">${m.water.badge}</span></div>`;
+  h+=`<div class="wq-table">`+m.water.rows.map(([k,v,u])=>`<div class="r"><span class="k">${k}</span><span class="n">${v}</span><span class="u">${u}</span></div>`).join("")+`</div>`;
+  h+=`</div>`;
+  return h;
+}
+function sustainHtml(site){
+  const win=site.window[awIdx], data=site.sustain[win]||site.sustain.Now;
+  let h=`<div class="lp-sect">Sustainability</div><div class="lp-note">${data.note}</div><div class="lp-sustain">`;
+  h+=data.cards.map(([l,v,d,dir])=>`<div class="sustaincard"><div class="l">${l}</div><div class="v">${v}</div><div class="s ${dir}">${d}</div></div>`).join("");
+  h+=`</div>`;
+  return h;
+}
+function bmsHtml(site){
+  let h=`<div class="lp-sect">BMS / HVAC</div><div class="lp-note">${site.bms.note}</div><div class="bms-table">`;
+  h+=site.bms.rows.map(([k,v,u])=>`<div class="r"><span class="k">${k}</span><span class="n">${v}${u?" "+u:""}</span></div>`).join("");
+  h+=`</div>`;
+  return h;
+}
+function safetyHtml(site){
+  let h=`<div class="lp-sect">Safety & Violation Detection</div>`;
+  h+=`<div class="safety-thumb"><div class="frame">&#9673;</div><div class="live">LIVE</div><div class="meta"><div class="nm">${site.safetyCam[0]}</div><div class="cd">${site.safetyCam[1]}</div></div></div>`;
+  h+=`<div class="lp-sect viol-head" style="display:flex">Automated Violation Alerts <span class="cnt">${site.violationCount}</span></div>`;
+  h+=site.violations.map(([t,tm,sub])=>`<div class="viol-row"><span class="viol-chip">PATROL NOTIFIED</span><div class="vt"><span>${t}</span><span style="color:var(--muted);font-size:9.5px">${tm}</span></div><div class="vs">${sub}</div></div>`).join("");
+  return h;
+}
+
 function renderLeftPanel(){
   const cfg=P[persona], site=cfg.sites[cfg.places[placeIdx].site], sname=cfg.places[placeIdx].name;
   let h=`<div class="lp-head"><div class="lp-role">${cfg.role}</div><div class="lp-site">&#128205; ${sname.toUpperCase()}</div></div>`;
-  h+=`<div class="lp-sect" style="border:none;padding:0;margin:0 0 6px">Analysis window</div><div class="analysiswin" id="awin">`+site.window.map((w,i)=>`<div class="awbtn ${i===0?'on':''}" data-w="${i}">${w}</div>`).join("")+`</div>`;
-  site.left.forEach(sec=>{
-    h+=`<div class="lp-sect">${sec.sect}</div>`;
-    sec.blocks.forEach(b=>h+=lpBlock(b));
-  });
+  h+=`<div class="lp-sect" style="border:none;padding:0;margin:0 0 6px">Analysis window</div><div class="analysiswin" id="awin">`+site.window.map((w,i)=>`<div class="awbtn ${i===awIdx?'on':''}" data-w="${i}">${w}</div>`).join("")+`</div>`;
+  if(persona==="ENV" && site.envMon){
+    h+=envMonHtml(site);
+    h+=sustainHtml(site);
+    h+=bmsHtml(site);
+    h+=safetyHtml(site);
+  } else {
+    site.left.forEach(sec=>{
+      h+=`<div class="lp-sect">${sec.sect}</div>`;
+      sec.blocks.forEach(b=>h+=lpBlock(b));
+    });
+  }
   h+=`<button class="simentry" id="simEntry">Run simulation for ${sname} &rarr;</button>`;
   $("leftPanel").innerHTML=h;
-  $("awin").addEventListener("click",e=>{const b=e.target.closest(".awbtn");if(!b)return;document.querySelectorAll("#awin .awbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");});
+  $("awin").addEventListener("click",e=>{const b=e.target.closest(".awbtn");if(!b)return;awIdx=+b.dataset.w;renderLeftPanel();});
   const se=$("simEntry");
   if(se) se.addEventListener("click",()=>alert("Opening simulation for "+sname+".\n\nIn the deployed product this hands off to the forecast tool (sim.rsg) scoped to this site."));
 }
@@ -701,10 +806,10 @@ function render(){
 
 document.querySelectorAll(".ptab").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".ptab").forEach(x=>x.classList.remove("on"));
-  b.classList.add("on"); persona=b.dataset.p; lod=1; placeIdx=0; render();
+  b.classList.add("on"); persona=b.dataset.p; lod=1; placeIdx=0; awIdx=0; render();
 }));
 $("lodSel").addEventListener("click",e=>{const b=e.target.closest(".lodbtn");if(!b)return;lod=+b.dataset.lod;render();});
-$("gPins").addEventListener("click",e=>{const t=e.target.closest("[data-place]");if(!t)return;placeIdx=+t.dataset.place;if(lod===1)lod=2;else if(lod===2)lod=3;render();});
+$("gPins").addEventListener("click",e=>{const t=e.target.closest("[data-place]");if(!t)return;placeIdx=+t.dataset.place;awIdx=0;if(lod===1)lod=2;else if(lod===2)lod=3;render();});
 
 function tickClock(){const d=new Date();const p=n=>String(n).padStart(2,"0");$("clock").textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} AST`;}
 setInterval(tickClock,1000);
