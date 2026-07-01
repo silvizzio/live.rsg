@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RSG Live</title>
+<style>
+  :root{
+    --bg:#0c1418; --water:#0e1b22; --land:#1b2730; --ink:#e7eef2; --muted:#8aa0ad;
+    --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+    --glass:rgba(16,26,32,.82); --glass2:rgba(20,32,40,.94);
+    --accent:#7fd1c4; --safe:#43c08a; --watch:#e0a93c; --risk:#e5654b; --neutral:#7f93a0;
+    --chip:rgba(255,255,255,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:13px;overflow:hidden}
+  .app{display:flex;flex-direction:column;height:100vh}
+
+  .topbar{display:flex;align-items:center;gap:14px;height:46px;padding:0 14px;background:var(--glass2);border-bottom:1px solid var(--line);z-index:30}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:600;letter-spacing:.3px}
+  .brand .dot{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,#2b4a52,#7fd1c4)}
+  .brand small{display:block;font-weight:400;color:var(--muted);font-size:10px;letter-spacing:.2px}
+  .topchips{display:flex;gap:6px;margin-left:6px}
+  .tchip{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:3px 9px}
+  .personas{display:flex;gap:4px;margin-left:auto}
+  .ptab{font-size:11px;padding:6px 13px;border-radius:8px;border:1px solid var(--line);color:var(--muted);cursor:pointer;background:transparent;user-select:none}
+  .ptab.on{color:#06121a;background:var(--accent);border-color:var(--accent);font-weight:600}
+  .topright{display:flex;align-items:center;gap:12px;margin-left:14px}
+  .lod{font-size:10px;border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted)}
+  .livestate{font-size:10px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+  .livestate .pip{width:7px;height:7px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 3px rgba(67,192,138,.18);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(67,192,138,.18)}50%{box-shadow:0 0 0 5px rgba(67,192,138,.05)}}
+  .clock{font-variant-numeric:tabular-nums;color:var(--muted);font-size:11px}
+  .vendor{font-size:10px;color:var(--muted);letter-spacing:.5px}
+
+  .body{flex:1;display:grid;grid-template-columns:264px 1fr 322px;min-height:0}
+  .col{position:relative;min-height:0}
+  .rail{background:var(--glass);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+  .railscroll{flex:1;overflow:auto;padding:12px 12px 14px}
+  .railfoot{padding:10px 12px;border-top:1px solid var(--line);background:var(--glass2)}
+  .stage{background:radial-gradient(120% 90% at 60% 30%,#10222b 0%,var(--water) 55%,#091217 100%);overflow:hidden}
+  .readout{background:var(--glass);border-left:1px solid var(--line);padding:12px 12px 28px;overflow:auto}
+
+  .sect{font-size:9.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin:16px 2px 8px}
+  .sect:first-child{margin-top:2px}
+
+  .lodlist{display:flex;flex-direction:column;gap:2px}
+  .loditem{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:7px;cursor:pointer;color:var(--muted)}
+  .loditem:hover{background:var(--chip)}
+  .loditem.on{background:rgba(127,209,196,.12);color:var(--ink)}
+  .loditem .nm{flex:1}
+  .loditem .lv{font-size:9px;color:var(--muted);border:1px solid var(--line2);border-radius:5px;padding:1px 6px}
+  .loditem.on .lv{color:var(--accent);border-color:var(--accent)}
+
+  .placelist{display:flex;flex-direction:column;gap:2px}
+  .placeitem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;color:var(--muted)}
+  .placeitem:hover{background:var(--chip)}
+  .placeitem.on{background:rgba(127,209,196,.12);color:var(--ink)}
+  .placeitem .nm{flex:1}
+  .placeitem .st{width:8px;height:8px;border-radius:50%;flex:none}
+  .st.safe{background:var(--safe)} .st.watch{background:var(--watch)} .st.risk{background:var(--risk)}
+
+  .layers{display:flex;flex-direction:column;gap:3px}
+  .lyr{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:5px 4px;cursor:pointer;border-radius:5px}
+  .lyr:hover{background:var(--chip)}
+  .lyr .sw{width:13px;height:13px;border-radius:3px;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex:none}
+  .lyr.on{color:var(--ink)}
+  .lyr.on .sw{background:rgba(127,209,196,.5);border-color:var(--accent)}
+
+  .mapwrap{position:absolute;inset:0}
+  svg.map{width:100%;height:100%;display:block}
+  .island{fill:var(--land);stroke:rgba(255,255,255,.14);stroke-width:1.2}
+  .gridline{stroke:rgba(255,255,255,.04);stroke-width:1}
+  .pin{fill:none;stroke:var(--ink);stroke-width:1.4}
+  .pindot{stroke-width:1.4}
+  .pindot.safe{fill:var(--safe);stroke:var(--safe)}
+  .pindot.watch{fill:var(--watch);stroke:var(--watch)}
+  .pindot.risk{fill:var(--risk);stroke:var(--risk)}
+  .pinlbl{fill:var(--muted);font-size:9px;font-family:var(--font)}
+  .camera{fill:none;stroke:rgba(231,238,242,.5);stroke-width:1.2}
+
+  .spotlayer{position:absolute;inset:0;pointer-events:none;z-index:5}
+  .spot{position:absolute;transform:translate(-50%,-50%);background:var(--glass2);border:1px solid var(--line2);border-radius:7px;padding:4px 8px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+  .spot small{color:var(--muted);font-size:8px;display:block;letter-spacing:.3px;text-transform:uppercase}
+  .spot b{font-size:10.5px;color:var(--ink)}
+  .spot.watch{border-color:rgba(224,169,60,.5)} .spot.risk{border-color:rgba(229,101,75,.5)}
+  .spot:after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;background:var(--glass2);border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);transform:translateX(-50%) rotate(45deg)}
+
+  .simentry{position:absolute;right:14px;bottom:14px;z-index:8;display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;border:1px solid var(--accent);border-radius:9px;padding:9px 13px;background:rgba(127,209,196,.12);color:var(--accent);cursor:pointer}
+  .simentry:hover{background:rgba(127,209,196,.2)}
+  .simentry.hidden{display:none}
+
+  .lodpill{position:absolute;left:14px;top:14px;z-index:8;font-size:11px;border:1px solid var(--line2);border-radius:8px;padding:7px 11px;background:var(--glass2);color:var(--muted)}
+  .lodpill b{color:var(--ink);font-weight:600}
+
+  .rotitle{margin:0 0 13px;padding-bottom:11px;border-bottom:1px solid var(--line)}
+  .rotitle .rt-name{font-size:15px;font-weight:600;color:var(--ink);line-height:1.2}
+  .rotitle .rt-lens{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+  .banner{border:1px solid var(--line2);border-radius:9px;padding:11px 12px;margin-bottom:13px;background:rgba(255,255,255,.02)}
+  .banner .ttl{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .banner .msg{font-size:13px;line-height:1.4}
+  .banner .tag{display:inline-block;font-size:9px;letter-spacing:.6px;text-transform:uppercase;border-radius:5px;padding:2px 7px;margin-top:8px}
+  .lv-stable{border-left:3px solid var(--safe)} .lv-stable .tag{background:rgba(67,192,138,.16);color:var(--safe)}
+  .lv-watch{border-left:3px solid var(--watch)} .lv-watch .tag{background:rgba(224,169,60,.16);color:var(--watch)}
+  .lv-risk{border-left:3px solid var(--risk)} .lv-risk .tag{background:rgba(229,101,75,.16);color:var(--risk)}
+
+  .hero{border:1px solid var(--line);border-radius:9px;padding:11px 12px;margin-bottom:9px;background:rgba(255,255,255,.02)}
+  .hero .hl{font-size:10.5px;color:var(--muted);margin-bottom:3px}
+  .hero .hv{font-size:25px;font-weight:600;line-height:1.05}
+  .hero .hv small{font-size:12px;color:var(--muted);font-weight:400}
+  .hero .delta{font-size:10.5px;color:var(--muted);margin-top:3px}
+
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0 4px}
+  .kpi{border:1px solid var(--line);border-radius:7px;padding:8px 9px;background:rgba(255,255,255,.02)}
+  .kpi .kl{font-size:9.5px;color:var(--muted);margin-bottom:3px}
+  .kpi .kv{font-size:13px;font-weight:600}
+  .kpi .kd{font-size:9px;color:var(--muted);margin-top:2px}
+  .kpi .kd.up{color:var(--safe)} .kpi .kd.down{color:var(--risk)}
+
+  .alerts{margin-top:6px}
+  .alert{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line2);border-radius:8px;padding:9px 10px;margin-bottom:6px}
+  .alert .dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}
+  .alert.watch{border-left:3px solid var(--watch)} .alert.watch .dot{background:var(--watch)}
+  .alert.risk{border-left:3px solid var(--risk)} .alert.risk .dot{background:var(--risk)}
+  .alert.info .dot{background:var(--neutral)}
+  .alert .at{font-size:11.5px;line-height:1.35}
+  .alert .ah{font-size:9.5px;color:var(--muted);margin-top:2px}
+
+  .note{font-size:9.5px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);margin-top:11px;padding-top:9px}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><div>Red Sea Global<small>Shura Island Intelligence Operations Centre</small></div></div>
+    <div class="topchips"><span class="tchip">Shura Island</span><span class="tchip" id="scopeChip">Shura Island</span></div>
+    <div class="personas" id="personas">
+      <button class="ptab on" data-p="GXM">GXM</button>
+      <button class="ptab" data-p="OPS">OPS</button>
+      <button class="ptab" data-p="ENV">ENV</button>
+      <button class="ptab" data-p="MO">MO</button>
+    </div>
+    <div class="topright">
+      <span class="lod" id="lodChip">LOD 1</span>
+      <span class="livestate"><span class="pip"></span><span>Live</span></span>
+      <span class="clock" id="clock">20:44:08 AST</span>
+      <span class="vendor">iot&sup2; &nbsp;VIZZIO</span>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="col rail">
+      <div class="railscroll">
+        <div class="sect">Zoom level</div>
+        <div class="lodlist" id="lodList"></div>
+
+        <div class="sect">Places</div>
+        <div class="placelist" id="placeList"></div>
+
+        <div class="sect">Layers shown</div>
+        <div class="layers" id="layers"></div>
+      </div>
+      <div class="railfoot">
+        <div class="note" style="border:none;margin:0;padding:0">Live view. Readings update from site feeds. Drill to a single site to run a forecast.</div>
+      </div>
+    </div>
+
+    <div class="col stage">
+      <div class="mapwrap">
+        <svg class="map" viewBox="0 0 900 640" id="map" preserveAspectRatio="xMidYMid slice">
+          <g id="gGrid"></g><g id="gIsland"></g><g id="gPins"></g>
+        </svg>
+        <div class="spotlayer" id="spotLayer"></div>
+      </div>
+      <div class="lodpill" id="lodPill">Viewing <b>Shura Island</b></div>
+      <button class="simentry hidden" id="simEntry">Run simulation &rarr;</button>
+    </div>
+
+    <div class="col readout" id="readout">
+      <div class="rotitle" id="roTitle"></div>
+      <div class="banner" id="banner"><div class="ttl">Live status</div><div class="msg" id="bannerMsg"></div><span class="tag" id="bannerTag"></span></div>
+      <div class="sect">Live conditions</div>
+      <div class="hero" id="hero"><div class="hl" id="heroLbl"></div><div class="hv" id="heroVal"></div><div class="delta" id="heroDelta"></div></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="sect" id="alertsSect">Alerts and activity</div>
+      <div class="alerts" id="alerts"></div>
+      <div class="note">Live operational view. Readings are drawn from site feeds: weather stations, water-quality buoys, cameras, and asset telemetry. Values shown are representative for this preview.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ISLAND="M210,250 C250,180 360,150 470,170 C560,186 640,150 700,200 C760,250 740,330 690,360 C660,378 640,420 580,430 C520,440 470,470 410,452 C350,434 300,452 260,420 C214,384 232,330 215,300 C205,282 196,270 210,250 Z";
+
+// ── Live config per persona ───────────────────────────────────────────────
+// Each persona has a scope label, a destination-level read, and named places.
+// Each place carries a status, a hero condition, KPIs, and any alerts.
+// Sustainability KPIs live under ENV; operational-impact read lives under MO.
+
+const LIVE = {
+  GXM: {
+    scope: "Shura Island",
+    lens: "Guest movement and transfers across the destination, live.",
+    dest: {
+      status:"stable", banner:"Guest flow steady across the island.",
+      hero:{lbl:"Avg transfer wait", val:"3.4", unit:"min", delta:"within the 6 min target"},
+      kpis:[["Guests on the move","1,240"],["Transfer requests","38 open"],["Fleet in service","46 of 52"],["Satisfaction","4.4 of 5"]],
+      alerts:[["info","All arrival waves within plan","Marina and forecourt nominal"]]
+    },
+    places:[
+      {name:"Shura Marina", x:300, y:300, status:"watch",
+       hero:{lbl:"Transfer demand", val:"214", unit:"vs 150 cap", delta:"11 vehicles free"},
+       kpis:[["Oldest request","8 min"],["Boats in service","28 of 34"],["Wait at berth","Rising"],["Satisfaction","4.1 of 5"]],
+       alerts:[["watch","Transfer demand above capacity at the Marina","6 more boats would clear the backlog"]]},
+      {name:"Spine Corridor", x:470, y:320, status:"stable",
+       hero:{lbl:"Buggy load", val:"5 of 6", unit:"seats", delta:"318 guests moving"},
+       kpis:[["Buggies running","22"],["Avg wait","2.1 min"],["Flow","Smooth"],["Satisfaction","4.5 of 5"]],
+       alerts:[["info","Corridor flowing normally","No pooling needed"]]},
+      {name:"Villas", x:600, y:280, status:"stable",
+       hero:{lbl:"Arrival travel time", val:"6.3", unit:"min", delta:"on target"},
+       kpis:[["Groups arriving","4"],["Longest leg","Marina to villas"],["Flow","Smooth"],["Satisfaction","4.3 of 5"]],
+       alerts:[["info","Arrivals on schedule","Marina to villas leg nominal"]]}
+    ]
+  },
+  OPS: {
+    scope: "Shura Island",
+    lens: "Fleet, chargers, and site operations across the destination, live.",
+    dest: {
+      status:"stable", banner:"Site operating within capacity.",
+      hero:{lbl:"Fleet utilization", val:"74", unit:"%", delta:"18 of 24 buggies active"},
+      kpis:[["Buggies in service","18 of 24"],["EV chargers free","84%"],["Safety flags","2 open"],["Idle assets","5"]],
+      alerts:[["info","No open safety escalations","Causeway and bridge nominal"]]
+    },
+    places:[
+      {name:"Turtle Bay", x:560, y:360, status:"watch",
+       hero:{lbl:"Fleet availability", val:"18 of 24", unit:"at 2 of 6 seats", delta:"pooling frees ~6"},
+       kpis:[["Chargers free","84%"],["Idle pods","1"],["Safety flags","Helmet, tailgating"],["Queue","4 sedans"]],
+       alerts:[["watch","Buggies running under-filled at Turtle Bay","Pooling reception trips frees about 6 vehicles"]]},
+      {name:"Causeway", x:410, y:400, status:"risk",
+       hero:{lbl:"Buggy load", val:"7 of 6", unit:"over capacity", delta:"helmet flags rising"},
+       kpis:[["Safety flags","Rising"],["Bridge status","Tailgating"],["Marshal","Not assigned"],["Queue","Building"]],
+       alerts:[["risk","Over-capacity buggy on the causeway","Send a safety marshal to the causeway queue"]]},
+      {name:"IOC Building", x:640, y:300, status:"stable",
+       hero:{lbl:"Floor temperature", val:"22.3", unit:"C", delta:"nominal across plate"},
+       kpis:[["Occupancy","Moderate"],["HVAC","Nominal"],["District cooling","Within load"],["Cameras","All reporting"]],
+       alerts:[["info","Building interior nominal","HVAC and cooling within setpoints"]]}
+    ]
+  },
+  ENV: {
+    scope: "Shura Island",
+    lens: "Air, wind, and water across the destination, plus per-asset sustainability, live.",
+    dest: {
+      status:"stable", banner:"Air, wind, and water within safe range.",
+      hero:{lbl:"Water quality index", val:"8.6", unit:"of 10", delta:"Clear"},
+      kpis:[["Air quality","88, Moderate"],["Wind","3.6 m/s NW"],["Turbidity","2.4 NTU"],["Dissolved O2","96%"]],
+      alerts:[["info","All monitoring assets reporting","43 of 43 online"]],
+      sustain:[["Electricity","428,000 kWh","down 6%","down"],["Renewable share","82%","up 4 pts","up"],["Energy intensity","47 kWh/room-night","down 5%","down"],["Water use","3,940 m3","down 3%","down"],["Water intensity","430 L/guest-night","down 2%","down"],["Waste diverted","68%","up 7 pts","up"],["Est. CO2","61 t","down 9%","down"]]
+    },
+    places:[
+      {name:"Shura Marina", x:300, y:300, status:"watch",
+       hero:{lbl:"Colour index", val:"81", unit:"vs 94 baseline", delta:"probe LG-04 confirms"},
+       kpis:[["Turbidity","3.1 NTU"],["Dissolved O2","91%"],["pH","8.02"],["Air quality","Nominal"]],
+       alerts:[["watch","Water anomaly at Lagoon East","Send a marine team, colour index down to 81 from 94"]]},
+      {name:"SLS Red Sea", x:520, y:250, status:"risk",
+       hero:{lbl:"Restricted-area alert", val:"2 people", unit:"in reef zone", delta:"1 min old"},
+       kpis:[["Water quality","94"],["Camera","RB-02 live"],["Zone","Restricted reef"],["Response","Security called"]],
+       alerts:[["risk","Unauthorized swimmers in a restricted reef zone","Security called to SLS Red Sea, alert 1 minute old"]]},
+      {name:"Lagoon East", x:600, y:360, status:"watch",
+       hero:{lbl:"Monitoring assets", val:"41 of 43", unit:"reporting", delta:"LG-04 offline 6 min"},
+       kpis:[["Probe LG-04","Offline"],["Reef cam RB-01","Degraded"],["Air quality","Nominal"],["Wind","Nominal"]],
+       alerts:[["watch","Monitoring gap at Lagoon East","Send a technician, probe LG-04 offline and RB-01 degraded"]]}
+    ]
+  },
+  MO: {
+    scope: "North Reef",
+    lens: "Reef conditions, dive and mooring capacity, and operational impact of the weather, live.",
+    dest: {
+      status:"watch", banner:"Reef conditions holding, wind rising toward the small-craft limit.",
+      hero:{lbl:"Water temperature", val:"29.8", unit:"C", delta:"trending toward 30.5 threshold"},
+      kpis:[["Turbidity","4.6 NTU"],["Boats near reef","11 of 12"],["Moorings in use","17 of 18"],["Wind","14 kn"]],
+      alerts:[["watch","Water temperature trending toward the coral threshold","Consider resting Site B ahead of breach"]],
+      ops:{
+        title:"Operational impact",
+        rows:[
+          ["Passenger boats","Caution","watch","Wind 14 kn, gusting near the small-craft limit"],
+          ["Seaplanes","Go","safe","Crosswind within limits, visibility clear"],
+          ["Dive operations","Caution","watch","Turbidity 4.6 NTU, approaching the 5.0 dive limit"]
+        ]
+      }
+    },
+    places:[
+      {name:"North Reef", x:500, y:300, status:"watch",
+       hero:{lbl:"Water temperature", val:"29.8", unit:"C", delta:"toward 30.5 threshold"},
+       kpis:[["Turbidity","4.6 NTU"],["Boats","11 of 12"],["Moorings","17 of 18"],["Wind","14 kn"]],
+       alerts:[["watch","Temperature trending toward breach at North Reef","Rest Site B, shift afternoon groups to Site C"]]},
+      {name:"Site B", x:410, y:360, status:"risk",
+       hero:{lbl:"Turbidity", val:"5.2", unit:"NTU", delta:"over the 5.0 threshold"},
+       kpis:[["Boats at site","11"],["Dive status","Diverting"],["Response","Auto-assigned"],["Wind","15 kn"]],
+       alerts:[["risk","Turbidity over threshold at Site B","Divert dive groups to Site C, auto-assigned to marine security"]]},
+      {name:"Site C", x:600, y:340, status:"stable",
+       hero:{lbl:"Capacity", val:"6 of 12", unit:"boats", delta:"room for arrivals"},
+       kpis:[["Turbidity","3.4 NTU"],["Moorings","9 of 18"],["Dive status","Open"],["Wind","13 kn"]],
+       alerts:[["info","Site C open with capacity","Receiving diverted groups from Site B"]]}
+    ]
+  }
+};
+
+// ── State ──────────────────────────────────────────────────────────────────
+let persona = "GXM";
+let lod = 1;            // 1 destination, 2 area, 3 site
+let placeIdx = 0;
+
+const $ = id => document.getElementById(id);
+
+function drawIsland(){
+  $("gGrid").innerHTML = "";
+  let g = "";
+  for(let x=0;x<900;x+=45) g += `<line class="gridline" x1="${x}" y1="0" x2="${x}" y2="640"/>`;
+  for(let y=0;y<640;y+=45) g += `<line class="gridline" x1="0" y1="${y}" x2="900" y2="${y}"/>`;
+  $("gGrid").innerHTML = g;
+  $("gIsland").innerHTML = `<path class="island" d="${ISLAND}"/>`;
+}
+
+function statusClass(s){ return s==="risk"?"risk":s==="watch"?"watch":"safe"; }
+function bannerLevel(s){ return s==="risk"?"lv-risk":s==="watch"?"lv-watch":"lv-stable"; }
+function bannerTag(s){ return s==="risk"?"Action needed":s==="watch"?"Watch":"Stable"; }
+
+function renderRail(){
+  const cfg = LIVE[persona];
+  // LOD list
+  const lods = [[1,"Destination"],[2,"Area"],[3,"Single site"]];
+  $("lodList").innerHTML = lods.map(([n,label])=>
+    `<div class="loditem ${n===lod?'on':''}" data-lod="${n}"><span class="nm">${label}</span><span class="lv">LOD ${n}</span></div>`
+  ).join("");
+  // Places (only meaningful at LOD 2 and 3)
+  $("placeList").innerHTML = cfg.places.map((p,i)=>
+    `<div class="placeitem ${(lod>1&&i===placeIdx)?'on':''}" data-place="${i}"><span class="st ${statusClass(p.status)}"></span><span class="nm">${p.name}</span></div>`
+  ).join("");
+  // Layers (representative, non-interactive labels for the preview)
+  const layers = persona==="ENV"
+    ? [["Conditions field",true],["Camera pins",true],["Alert markers",true],["Sustainability",false]]
+    : persona==="MO"
+    ? [["Reef conditions",true],["Boats and moorings",true],["Alert markers",true]]
+    : [["Live read",true],["Camera pins",true],["Alert markers",true]];
+  $("layers").innerHTML = layers.map(([l,on])=>
+    `<div class="lyr ${on?'on':''}"><span class="sw">${on?'&#10003;':''}</span>${l}</div>`
+  ).join("");
+}
+
+function renderMap(){
+  const cfg = LIVE[persona];
+  let pins = "";
+  cfg.places.forEach((p,i)=>{
+    const active = (lod>1 && i===placeIdx);
+    const r = active?9:6;
+    pins += `<circle class="pindot ${statusClass(p.status)}" cx="${p.x}" cy="${p.y}" r="${r}" fill-opacity="${active?0.9:0.5}" data-place="${i}"/>`;
+    pins += `<text class="pinlbl" x="${p.x+12}" y="${p.y+4}">${p.name}</text>`;
+  });
+  $("gPins").innerHTML = pins;
+
+  // Spot bubbles for the active place at LOD 2/3
+  const sl = $("spotLayer");
+  if(lod>1){
+    const p = cfg.places[placeIdx];
+    const px = (p.x/900)*100, py = (p.y/640)*100;
+    sl.innerHTML = `<div class="spot ${statusClass(p.status)}" style="left:${px}%;top:${py-8}%"><small>${p.name}</small><b>${p.hero.val} ${p.hero.unit||''}</b></div>`;
+  } else {
+    sl.innerHTML = "";
+  }
+}
+
+function renderReadout(){
+  const cfg = LIVE[persona];
+  const view = (lod>1) ? cfg.places[placeIdx] : cfg.dest;
+  const scope = (lod>1) ? cfg.places[placeIdx].name : cfg.scope;
+
+  $("roTitle").innerHTML = `<div class="rt-name">${persona==="GXM"?"Guest Experience":persona==="OPS"?"Operations":persona==="ENV"?"Environment":"Marine Operations"}</div><div class="rt-lens">${cfg.lens}</div>`;
+
+  const st = view.status;
+  $("banner").className = "banner "+bannerLevel(st);
+  $("bannerMsg").textContent = (lod>1) ? (view.alerts[0]?view.alerts[0][1]:"Live read for "+scope) : cfg.dest.banner;
+  $("bannerTag").textContent = bannerTag(st);
+
+  $("heroLbl").textContent = view.hero.lbl;
+  $("heroVal").innerHTML = `${view.hero.val} <small>${view.hero.unit||''}</small>`;
+  $("heroDelta").textContent = view.hero.delta||"";
+
+  // KPI grid
+  $("kpis").innerHTML = view.kpis.map(([l,v])=>
+    `<div class="kpi"><div class="kl">${l}</div><div class="kv">${v}</div></div>`
+  ).join("");
+
+  // ENV sustainability block (destination level only)
+  let extra = "";
+  if(persona==="ENV" && lod===1 && cfg.dest.sustain){
+    extra += `<div class="sect">Sustainability, per asset</div><div class="kpis">`;
+    extra += cfg.dest.sustain.map(([l,v,d,dir])=>
+      `<div class="kpi"><div class="kl">${l}</div><div class="kv">${v}</div><div class="kd ${dir}">${d}</div></div>`
+    ).join("");
+    extra += `</div>`;
+  }
+
+  // MO operational-impact block (destination level)
+  if(persona==="MO" && lod===1 && cfg.dest.ops){
+    extra += `<div class="sect">${cfg.dest.ops.title}</div><div class="alerts">`;
+    extra += cfg.dest.ops.rows.map(([svc,verdict,cls,why])=>
+      `<div class="alert ${cls==='safe'?'info':cls}"><span class="dot" style="background:var(--${cls==='safe'?'safe':cls})"></span><div><div class="at">${svc}: <b style="color:var(--${cls==='safe'?'safe':cls})">${verdict}</b></div><div class="ah">${why}</div></div></div>`
+    ).join("");
+    extra += `</div>`;
+  }
+
+  // Alerts
+  let alertsHtml = view.alerts.map(([lvl,title,sub])=>
+    `<div class="alert ${lvl}"><span class="dot"></span><div><div class="at">${title}</div><div class="ah">${sub}</div></div></div>`
+  ).join("");
+
+  // Insert extra (sustainability / ops) before alerts by rebuilding the tail
+  $("alertsSect").insertAdjacentHTML && null;
+  // Simple approach: put extra into a holder before alerts
+  let holder = document.getElementById("extraHolder");
+  if(!holder){
+    holder = document.createElement("div");
+    holder.id = "extraHolder";
+    $("alertsSect").parentNode.insertBefore(holder, $("alertsSect"));
+  }
+  holder.innerHTML = extra;
+
+  $("alerts").innerHTML = alertsHtml;
+}
+
+function renderTop(){
+  $("lodChip").textContent = "LOD "+lod;
+  $("scopeChip").textContent = LIVE[persona].scope;
+  const view = (lod>1)?LIVE[persona].places[placeIdx].name:LIVE[persona].scope;
+  $("lodPill").innerHTML = `Viewing <b>${view}</b>`;
+  // Sim entry only at LOD 3
+  $("simEntry").className = "simentry"+(lod===3?"":" hidden");
+}
+
+function render(){ renderRail(); renderMap(); renderReadout(); renderTop(); }
+
+// ── Interactions ────────────────────────────────────────────────────────────
+document.querySelectorAll(".ptab").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".ptab").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  persona = b.dataset.p; lod = 1; placeIdx = 0; render();
+}));
+
+$("lodList").addEventListener("click",e=>{
+  const it = e.target.closest(".loditem"); if(!it) return;
+  lod = +it.dataset.lod; if(lod===1) placeIdx = 0; render();
+});
+$("placeList").addEventListener("click",e=>{
+  const it = e.target.closest(".placeitem"); if(!it) return;
+  placeIdx = +it.dataset.place; if(lod<2) lod = 3; render();
+});
+$("gPins").addEventListener("click",e=>{
+  const t = e.target.closest("[data-place]"); if(!t) return;
+  placeIdx = +t.dataset.place; lod = 3; render();
+});
+$("simEntry").addEventListener("click",()=>{
+  const place = LIVE[persona].places[placeIdx].name;
+  alert("Opening simulation for "+place+".\n\nIn the deployed product this hands off to the forecast tool (sim.rsg) scoped to this site.");
+});
+
+// gentle live clock + KPI shimmer to read as "live"
+function tickClock(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  const ss = String(d.getSeconds()).padStart(2,"0");
+  $("clock").textContent = `${hh}:${mm}:${ss} AST`;
+}
+setInterval(tickClock, 1000);
+
+drawIsland();
+render();
+tickClock();
+</script>
+</body>
+</html>
