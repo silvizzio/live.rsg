@@ -10,6 +10,7 @@
     --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
     --glass:rgba(16,26,32,.82); --glass2:rgba(20,32,40,.94);
     --accent:#7fd1c4; --safe:#43c08a; --watch:#e0a93c; --risk:#e5654b; --neutral:#7f93a0;
+    --crit:#e5654b; --high:#e08a3c; --med:#e0c33c; --low:#43c08a;
     --chip:rgba(255,255,255,.06);
     --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
@@ -18,46 +19,55 @@
   body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:13px;overflow:hidden}
   .app{display:flex;flex-direction:column;height:100vh}
 
-  .topbar{display:flex;align-items:center;gap:14px;height:46px;padding:0 14px;background:var(--glass2);border-bottom:1px solid var(--line);z-index:30}
-  .brand{display:flex;align-items:center;gap:8px;font-weight:600;letter-spacing:.3px}
-  .brand .dot{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,#2b4a52,#7fd1c4)}
-  .brand small{display:block;font-weight:400;color:var(--muted);font-size:10px;letter-spacing:.2px}
-  .topchips{display:flex;gap:6px;margin-left:6px}
-  .tchip{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:3px 9px}
-  .personas{display:flex;gap:4px;margin-left:auto}
-  .ptab{font-size:11px;padding:6px 13px;border-radius:8px;border:1px solid var(--line);color:var(--muted);cursor:pointer;background:transparent;user-select:none}
+  /* ── TOPBAR ── */
+  .topbar{display:flex;align-items:center;gap:0;height:52px;padding:0 16px;background:linear-gradient(180deg,rgba(12,20,24,.96),rgba(12,20,24,.86));border-bottom:1px solid var(--line);z-index:30}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .logo{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#2b4a52,#7fd1c4);flex:none}
+  .brand .bt{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;line-height:1.3}
+  .brand .bn{font-size:12px;color:var(--ink);font-weight:600;line-height:1.3}
+  .divider{width:1px;height:26px;background:var(--line);margin:0 16px}
+  .compass{flex:1;display:flex;align-items:center;justify-content:center;gap:32px;font-size:10px;color:var(--muted);letter-spacing:1px;position:relative;max-width:420px}
+  .compass .tick{opacity:.6}
+  .compass .needle{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--muted)}
+  .envcluster{display:flex;align-items:center;gap:18px;margin-left:auto}
+  .env{display:flex;flex-direction:column;line-height:1.25}
+  .env .el{font-size:8.5px;letter-spacing:.8px;color:var(--muted);text-transform:uppercase}
+  .env .ev{font-size:12px;font-weight:600}
+  .env .ev small{font-size:9px;color:var(--muted);font-weight:400}
+  .personas{display:flex;gap:4px;margin-left:18px}
+  .ptab{font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);color:var(--muted);cursor:pointer;background:transparent;user-select:none}
   .ptab.on{color:#06121a;background:var(--accent);border-color:var(--accent);font-weight:600}
-  .topright{display:flex;align-items:center;gap:12px;margin-left:14px}
-  .lod{font-size:10px;border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted)}
-  .livestate{font-size:10px;display:flex;align-items:center;gap:6px;color:var(--muted)}
-  .livestate .pip{width:7px;height:7px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 3px rgba(67,192,138,.18);animation:pulse 2.4s infinite}
+  .clockbox{display:flex;flex-direction:column;line-height:1.25;margin-left:18px;text-align:right}
+  .clockbox .ct{font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .clockbox .cd{font-size:9px;color:var(--muted);letter-spacing:.5px}
+  .vendor{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-left:16px}
+  .lodchip{margin-left:14px;font-size:10px;border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted)}
+  .livepip{display:inline-flex;align-items:center;gap:5px;margin-left:12px;font-size:10px;color:var(--muted)}
+  .livepip b{width:7px;height:7px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 3px rgba(67,192,138,.18);animation:pulse 2.4s infinite}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(67,192,138,.18)}50%{box-shadow:0 0 0 5px rgba(67,192,138,.05)}}
-  .clock{font-variant-numeric:tabular-nums;color:var(--muted);font-size:11px}
-  .vendor{font-size:10px;color:var(--muted);letter-spacing:.5px}
 
-  /* body is a column: a stage row (which becomes columns at LOD3) + a bottom strip (LOD1/2) */
+  /* ── BODY / LAYOUT ── */
   .body{flex:1;display:flex;flex-direction:column;min-height:0}
   .stagerow{flex:1;display:grid;grid-template-columns:1fr;min-height:0}
-  .app.lod3 .stagerow{grid-template-columns:300px 1fr 322px}
+  .app.lod3 .stagerow{grid-template-columns:326px 1fr 340px}
   .col{position:relative;min-height:0;overflow:hidden}
-
-  /* left + right panels only exist at LOD3 */
   .leftpanel,.rightpanel{display:none;background:var(--glass);overflow:auto}
-  .leftpanel{border-right:1px solid var(--line);padding:12px 12px 18px}
-  .rightpanel{border-left:1px solid var(--line);padding:12px}
+  .leftpanel{border-right:1px solid var(--line);padding:14px 14px 20px}
+  .rightpanel{border-left:1px solid var(--line);padding:12px 12px 16px}
   .app.lod3 .leftpanel,.app.lod3 .rightpanel{display:block}
-
   .stage{background:radial-gradient(120% 90% at 60% 30%,#10222b 0%,var(--water) 55%,#091217 100%);overflow:hidden}
+
+  /* ── MAP ── */
   .mapwrap{position:absolute;inset:0}
   svg.map{width:100%;height:100%;display:block}
   .island{fill:var(--land);stroke:rgba(255,255,255,.14);stroke-width:1.2}
   .gridline{stroke:rgba(255,255,255,.04);stroke-width:1}
-  .pindot{stroke-width:1.4;cursor:pointer}
-  .pindot.safe{fill:var(--safe);stroke:var(--safe)}
-  .pindot.watch{fill:var(--watch);stroke:var(--watch)}
-  .pindot.risk{fill:var(--risk);stroke:var(--risk)}
-  .pinlbl{fill:var(--muted);font-size:9px;font-family:var(--font);pointer-events:none}
-  .camglyph{fill:none;stroke:rgba(231,238,242,.6);stroke-width:1.1}
+  .sevdot{stroke-width:1.4;cursor:pointer}
+  .sevdot.crit{fill:var(--crit);stroke:var(--crit)} .sevdot.high{fill:var(--high);stroke:var(--high)}
+  .sevdot.med{fill:var(--med);stroke:var(--med)} .sevdot.low{fill:var(--low);stroke:var(--low)}
+  .plabel{fill:var(--muted);font-size:9px;font-family:var(--font);pointer-events:none}
+  .maphold{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .maphold span{font-size:10px;color:rgba(138,160,173,.45);letter-spacing:1px;text-transform:uppercase;border:1px dashed rgba(138,160,173,.2);border-radius:8px;padding:6px 12px}
 
   .spotlayer{position:absolute;inset:0;pointer-events:none;z-index:5}
   .spot{position:absolute;transform:translate(-50%,-50%);background:var(--glass2);border:1px solid var(--line2);border-radius:7px;padding:4px 8px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.35)}
@@ -65,74 +75,140 @@
   .spot b{font-size:10.5px;color:var(--ink)}
   .spot.watch{border-color:rgba(224,169,60,.5)} .spot.risk{border-color:rgba(229,101,75,.5)}
 
-  /* floating LOD selector on the map */
-  .lodsel{position:absolute;left:14px;top:14px;z-index:8;display:flex;gap:4px;background:var(--glass2);border:1px solid var(--line);border-radius:9px;padding:4px}
+  /* map legend (LOD1/2, bottom-left) */
+  .legend{position:absolute;left:16px;bottom:16px;z-index:8;background:var(--glass2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-width:210px;backdrop-filter:blur(5px)}
+  .app.lod3 .legend{display:none}
+  .legend .lh{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .legend .sub{font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:9px 0 6px}
+  .sevrow{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--ink);padding:2px 0}
+  .sevrow .d{width:9px;height:9px;border-radius:50%;flex:none}
+  .sevrow .n{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted)}
+  .d.crit{background:var(--crit)} .d.high{background:var(--high)} .d.med{background:var(--med)} .d.low{background:var(--low)}
+  .feedrow{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--ink)}
+  .feedrow .lv{color:var(--risk);font-size:9px;letter-spacing:.8px;font-weight:600}
+
+  /* LOD selector (top-left) */
+  .lodsel{position:absolute;left:16px;top:16px;z-index:9;display:flex;gap:4px;background:var(--glass2);border:1px solid var(--line);border-radius:9px;padding:4px}
   .lodbtn{font-size:10.5px;padding:6px 11px;border-radius:6px;border:1px solid transparent;color:var(--muted);cursor:pointer;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px}
   .lodbtn small{font-size:8px;opacity:.7}
   .lodbtn:hover{background:var(--chip)}
   .lodbtn.on{background:rgba(127,209,196,.16);border-color:var(--accent);color:var(--ink)}
-  .viewing{position:absolute;right:14px;top:14px;z-index:8;font-size:11px;border:1px solid var(--line2);border-radius:8px;padding:7px 11px;background:var(--glass2);color:var(--muted)}
+  .viewing{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:8;font-size:11px;color:var(--muted)}
   .viewing b{color:var(--ink);font-weight:600}
-  .maphint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;font-size:10px;color:var(--muted);background:var(--glass2);border:1px solid var(--line);border-radius:20px;padding:5px 12px}
-  .app.lod3 .maphint{display:none}
 
-  /* bottom strip (LOD1/2 read) */
-  .bottomstrip{border-top:1px solid var(--line);background:var(--glass);padding:10px 14px;display:flex;align-items:stretch;gap:10px;overflow-x:auto;min-height:96px}
+  /* right tool rail (LOD1/2) */
+  .toolrail{position:absolute;right:16px;top:16px;z-index:8;display:flex;flex-direction:column;gap:6px}
+  .app.lod3 .toolrail{display:none}
+  .tbtn{width:30px;height:30px;border:1px solid var(--line2);border-radius:7px;background:var(--glass2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer}
+  .tbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .zoomrail{position:absolute;right:16px;bottom:16px;z-index:8;display:flex;flex-direction:column;gap:6px}
+  .app.lod3 .zoomrail{display:none}
+
+  /* ── BOTTOM STRIP (LOD1/2) ── */
+  .bottomstrip{border-top:1px solid var(--line);background:var(--glass);padding:12px 16px 14px;min-height:120px}
   .app.lod3 .bottomstrip{display:none}
-  .striphead{flex:none;display:flex;flex-direction:column;justify-content:center;padding-right:12px;border-right:1px solid var(--line);min-width:150px}
-  .striphead .sh-name{font-size:12px;font-weight:600;color:var(--ink)}
-  .striphead .sh-lens{font-size:9.5px;color:var(--muted);margin-top:3px;line-height:1.35}
-  .stripstat{display:inline-flex;align-items:center;gap:5px;font-size:9px;text-transform:uppercase;letter-spacing:.6px;margin-top:6px;border-radius:5px;padding:2px 7px;width:fit-content}
-  .stripstat.safe{background:rgba(67,192,138,.16);color:var(--safe)}
-  .stripstat.watch{background:rgba(224,169,60,.16);color:var(--watch)}
-  .stripstat.risk{background:rgba(229,101,75,.16);color:var(--risk)}
-  .stripcard{flex:none;min-width:112px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;justify-content:center}
-  .stripcard .cl{font-size:9px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
-  .stripcard .cv{font-size:14px;font-weight:600}
-  .stripcard .cv small{font-size:10px;color:var(--muted);font-weight:400}
-  .stripcard.hero{border-color:var(--line2);background:rgba(127,209,196,.06)}
+  .bshead{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:var(--ink);margin-bottom:11px}
+  .bshead .ico{width:16px;height:16px;opacity:.7}
+  .bshead .area{color:var(--accent);font-weight:600}
+  .bsgroups{display:flex;gap:0;align-items:stretch;overflow-x:auto}
+  .bsgroup{flex:none;padding:0 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:9px;min-width:0}
+  .bsgroup:first-child{padding-left:0}
+  .bsgroup:last-child{border-right:none}
+  .bsphase{font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+  .bsmetrics{display:flex;gap:22px}
+  .bsm{display:flex;flex-direction:column;gap:2px;white-space:nowrap}
+  .bsm .l{font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .bsm .v{font-size:19px;font-weight:600;line-height:1}
+  .bsm .v small{font-size:10px;color:var(--muted);font-weight:400}
+  .bsm .s{font-size:9px;color:var(--muted)}
+  .bsm .s.up{color:var(--safe)} .bsm .s.down{color:var(--risk)}
+  /* multi-value distribution (vehicle mix) */
+  .dist{display:flex;gap:14px}
+  .dist .du{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .dist .dv{font-size:17px;font-weight:600;line-height:1}
+  .dist .dl{font-size:8px;color:var(--muted)}
+  /* list block (top stations) */
+  .bslist{display:flex;flex-direction:column;gap:3px}
+  .bslist .li{display:flex;gap:14px;font-size:10.5px;justify-content:space-between}
+  .bslist .li .nm{color:var(--ink)} .bslist .li .vl{color:var(--muted);font-variant-numeric:tabular-nums}
   /* ops chips (MO) */
-  .stripcard.op{min-width:140px}
-  .stripcard.op .verdict{font-size:12px;font-weight:600}
-  .stripcard.op.safe .verdict{color:var(--safe)} .stripcard.op.watch .verdict{color:var(--watch)} .stripcard.op.risk .verdict{color:var(--risk)}
-  .stripcard.op .why{font-size:8.5px;color:var(--muted);margin-top:3px;line-height:1.3;white-space:normal}
+  .opchip{display:flex;flex-direction:column;gap:3px;min-width:130px}
+  .opchip .svc{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .opchip .verdict{font-size:15px;font-weight:600}
+  .opchip.safe .verdict{color:var(--safe)} .opchip.watch .verdict{color:var(--watch)} .opchip.risk .verdict{color:var(--risk)}
+  .opchip .why{font-size:8.5px;color:var(--muted);white-space:normal;line-height:1.3}
 
-  /* LOD3 left KPI panel */
-  .sect{font-size:9.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin:14px 2px 8px}
-  .sect:first-child{margin-top:2px}
-  .rotitle{margin:0 0 12px;padding-bottom:11px;border-bottom:1px solid var(--line)}
-  .rotitle .rt-name{font-size:15px;font-weight:600;color:var(--ink);line-height:1.2}
-  .rotitle .rt-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
-  .hero{border:1px solid var(--line2);border-radius:9px;padding:11px 12px;margin-bottom:9px;background:rgba(127,209,196,.06)}
-  .hero .hl{font-size:10.5px;color:var(--muted);margin-bottom:3px}
-  .hero .hv{font-size:24px;font-weight:600;line-height:1.05}
-  .hero .hv small{font-size:12px;color:var(--muted);font-weight:400}
-  .hero .delta{font-size:10.5px;color:var(--muted);margin-top:3px}
-  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-  .kpi{border:1px solid var(--line);border-radius:7px;padding:8px 9px;background:rgba(255,255,255,.02)}
-  .kpi .kl{font-size:9.5px;color:var(--muted);margin-bottom:3px}
-  .kpi .kv{font-size:13px;font-weight:600}
-  .kpi .kd{font-size:9px;margin-top:2px;color:var(--muted)}
-  .kpi .kd.up{color:var(--safe)} .kpi .kd.down{color:var(--risk)}
-  .alert{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line2);border-radius:8px;padding:9px 10px;margin-bottom:6px}
-  .alert .dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none;background:var(--neutral)}
-  .alert.watch{border-left:3px solid var(--watch)} .alert.watch .dot{background:var(--watch)}
-  .alert.risk{border-left:3px solid var(--risk)} .alert.risk .dot{background:var(--risk)}
-  .alert .at{font-size:11.5px;line-height:1.35}
-  .alert .ah{font-size:9.5px;color:var(--muted);margin-top:2px}
-  .simentry{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;border:1px solid var(--accent);border-radius:9px;padding:10px 14px;background:rgba(127,209,196,.12);color:var(--accent);cursor:pointer;margin-top:14px}
+  /* ── LOD3 LEFT PANEL ── */
+  .lp-head{margin-bottom:12px}
+  .lp-role{font-size:14px;font-weight:600;color:var(--ink)}
+  .lp-site{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px}
+  .analysiswin{display:flex;gap:4px;margin:12px 0 4px}
+  .awbtn{flex:1;text-align:center;font-size:10.5px;padding:6px 4px;border:1px solid var(--line2);border-radius:6px;color:var(--muted);cursor:pointer;user-select:none}
+  .awbtn.on{background:rgba(127,209,196,.16);border-color:var(--accent);color:var(--ink);font-weight:600}
+  .lp-sect{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:16px 0 9px;padding-top:12px;border-top:1px solid var(--line)}
+  .lp-sect:first-of-type{border-top:none;padding-top:0}
+  .lp-big{margin-bottom:10px}
+  .lp-big .l{font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .lp-big .v{font-size:26px;font-weight:600;line-height:1}
+  .lp-big .v small{font-size:11px;color:var(--muted);font-weight:400}
+  .lp-big .s{font-size:10px;color:var(--muted);margin-top:3px}
+  .lp-big .s.up{color:var(--safe)} .lp-big .s.down{color:var(--risk)}
+  .lp-pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+  .lp-pair .l{font-size:9px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .lp-pair .v{font-size:16px;font-weight:600}
+  .lp-pair .v small{font-size:10px;color:var(--muted);font-weight:400}
+  .lp-list{margin-bottom:12px}
+  .lp-list .lt{font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .lp-list .row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
+  .lp-list .row .nm{color:var(--ink)} .lp-list .row .vl{color:var(--muted);font-variant-numeric:tabular-nums}
+  .lp-dist{margin-bottom:12px}
+  .lp-dist .lt{font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:flex;justify-content:space-between}
+  .lp-dist .units{display:flex;gap:16px}
+  .lp-dist .u{display:flex;flex-direction:column;gap:2px}
+  .lp-dist .uv{font-size:20px;font-weight:600;line-height:1}
+  .lp-dist .ul{font-size:8.5px;color:var(--muted)}
+  .lp-sustain{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .sustaincard{border:1px solid var(--line);border-radius:7px;padding:8px 9px;background:rgba(255,255,255,.02)}
+  .sustaincard .l{font-size:9px;color:var(--muted);margin-bottom:3px}
+  .sustaincard .v{font-size:14px;font-weight:600}
+  .sustaincard .s{font-size:9px;margin-top:2px}
+  .sustaincard .s.up{color:var(--safe)} .sustaincard .s.down{color:var(--risk)}
+  .simentry{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;border:1px solid var(--accent);border-radius:9px;padding:10px 14px;background:rgba(127,209,196,.12);color:var(--accent);cursor:pointer;margin-top:16px}
   .simentry:hover{background:rgba(127,209,196,.2)}
 
-  /* LOD3 right CCTV grid */
-  .cctvhead{font-size:9.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin:2px 2px 10px;display:flex;align-items:center;gap:6px}
-  .cctvgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .cam{position:relative;aspect-ratio:4/3;border:1px solid var(--line2);border-radius:7px;overflow:hidden;background:linear-gradient(135deg,#0e1a20,#132029)}
+  /* ── LOD3 CENTER ALERT CARD ── */
+  .alertcard{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:7;background:var(--glass2);border:1px solid var(--risk);border-left:3px solid var(--risk);border-radius:9px;padding:10px 13px;max-width:240px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+  .app:not(.lod3) .alertcard{display:none}
+  .alertcard .lvl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--risk);font-weight:600;margin-bottom:4px}
+  .alertcard .t{font-size:12px;color:var(--ink)}
+  .alertcard .s{font-size:10px;color:var(--muted);margin-top:2px}
+  .alertcard.watch{border-color:var(--watch);border-left-color:var(--watch)} .alertcard.watch .lvl{color:var(--watch)}
+
+  /* ── LOD3 RIGHT CCTV ── */
+  .cctv-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .cctv-head .ct{font-size:12px;font-weight:600;color:var(--ink)}
+  .cctv-head .ctl{margin-left:auto;display:flex;gap:6px}
+  .cctv-pill{font-size:9px;border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted);display:flex;align-items:center;gap:3px}
+  .cctv-crumb{font-size:9.5px;color:var(--muted);letter-spacing:.5px;margin-bottom:9px}
+  .cctv-crumb b{color:var(--ink)}
+  .cctv-search{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+  .cctv-search .box{flex:1;border:1px solid var(--line2);border-radius:7px;padding:6px 9px;font-size:10px;color:var(--muted)}
+  .cctv-search .cnt{font-size:9px;border:1px solid var(--line2);border-radius:6px;padding:5px 8px;color:var(--muted)}
+  .cctv-loc{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);margin-bottom:9px;letter-spacing:.4px}
+  .cctv-loc b{color:var(--ink);font-size:11px}
+  .cam{position:relative;aspect-ratio:16/9;border:1px solid var(--line2);border-radius:7px;overflow:hidden;background:linear-gradient(135deg,#0e1a20,#132029);margin-bottom:8px}
   .cam:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);pointer-events:none}
-  .cam .cl{position:absolute;left:6px;bottom:5px;font-size:8.5px;color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.6);z-index:2}
-  .cam .live{position:absolute;right:6px;top:5px;font-size:7.5px;letter-spacing:.5px;color:var(--risk);display:flex;align-items:center;gap:3px;z-index:2}
+  .cam .frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(231,238,242,.12);font-size:24px}
+  .cam .live{position:absolute;left:7px;top:6px;font-size:8px;letter-spacing:.6px;color:var(--risk);font-weight:700;display:flex;align-items:center;gap:3px;z-index:2}
   .cam .live b{width:5px;height:5px;border-radius:50%;background:var(--risk);animation:pulse 1.8s infinite}
-  .cam .frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(231,238,242,.14);font-size:22px}
-  .cam.wide{grid-column:1 / -1;aspect-ratio:16/6}
+  .cam .meta{position:absolute;left:7px;bottom:6px;z-index:2}
+  .cam .meta .nm{font-size:9px;color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .cam .meta .cd{font-size:8px;color:var(--muted)}
+  .camgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .camgrid .cam{aspect-ratio:4/3;margin-bottom:0}
+  .cctv-pag{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;font-size:10px;color:var(--muted)}
+  .cctv-pag .pg{border:1px solid var(--line2);border-radius:5px;padding:3px 8px;cursor:pointer}
+  .cctv-pag .pg.on{background:rgba(127,209,196,.16);border-color:var(--accent);color:var(--ink)}
 
   .note{font-size:9.5px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);margin-top:11px;padding-top:9px}
   .hidden{display:none!important}
@@ -142,20 +218,28 @@
 <div class="app lod1" id="app">
 
   <div class="topbar">
-    <div class="brand"><span class="dot"></span><div>Red Sea Global<small>Shura Island Intelligence Operations Centre</small></div></div>
-    <div class="topchips"><span class="tchip">Shura Island</span><span class="tchip" id="scopeChip">Shura Island</span></div>
+    <div class="brand">
+      <div class="logo"></div>
+      <div><div class="bt">Intelligence Operation Centre</div><div class="bn">Shura Island | Red Sea Global</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="compass"><span class="needle"></span><span class="tick">W</span><span>195</span><span>210</span></div>
+    <div class="envcluster">
+      <div class="env"><span class="el">Wind</span><span class="ev">12.4 <small>kn NW</small></span></div>
+      <div class="env"><span class="el">Sea</span><span class="ev">1.2 <small>m</small></span></div>
+      <div class="env"><span class="el">Air</span><span class="ev">31 <small>&deg;C</small></span></div>
+      <div class="env"><span class="el">AQI</span><span class="ev">42 <small>Good</small></span></div>
+    </div>
     <div class="personas" id="personas">
       <button class="ptab on" data-p="GXM">GXM</button>
       <button class="ptab" data-p="OPS">OPS</button>
       <button class="ptab" data-p="ENV">ENV</button>
       <button class="ptab" data-p="MO">MO</button>
     </div>
-    <div class="topright">
-      <span class="lod" id="lodChip">LOD 1</span>
-      <span class="livestate"><span class="pip"></span><span>Live</span></span>
-      <span class="clock" id="clock">12:21:45 AST</span>
-      <span class="vendor">iot&sup2; &nbsp;VIZZIO</span>
-    </div>
+    <span class="lodchip" id="lodChip">LOD 1</span>
+    <span class="livepip"><b></b>Live</span>
+    <div class="clockbox"><span class="ct" id="clock">20:44:08 AST</span><span class="cd">28 APR 2026</span></div>
+    <span class="vendor">iot&sup2; &nbsp;VIZZIO</span>
   </div>
 
   <div class="body">
@@ -168,7 +252,9 @@
           <svg class="map" viewBox="0 0 900 640" id="map" preserveAspectRatio="xMidYMid slice">
             <g id="gGrid"></g><g id="gIsland"></g><g id="gPins"></g>
           </svg>
+          <div class="maphold"><span>Map render placeholder</span></div>
           <div class="spotlayer" id="spotLayer"></div>
+          <div class="alertcard" id="alertCard"></div>
         </div>
         <div class="lodsel" id="lodSel">
           <div class="lodbtn on" data-lod="1">Destination<small>LOD 1</small></div>
@@ -176,13 +262,14 @@
           <div class="lodbtn" data-lod="3">Site<small>LOD 3</small></div>
         </div>
         <div class="viewing" id="viewing">Viewing <b>Shura Island</b></div>
-        <div class="maphint" id="mapHint">Click a place to zoom in</div>
+        <div class="toolrail"><div class="tbtn">&#9678;</div><div class="tbtn">&#9635;</div><div class="tbtn">&#9673;</div></div>
+        <div class="zoomrail"><div class="tbtn">&#9906;</div><div class="tbtn">+</div><div class="tbtn">&minus;</div></div>
+        <div class="legend" id="legend"></div>
       </div>
 
       <div class="col rightpanel" id="rightPanel"></div>
 
     </div>
-
     <div class="bottomstrip" id="bottomStrip"></div>
   </div>
 </div>
@@ -190,112 +277,287 @@
 <script>
 const ISLAND="M210,250 C250,180 360,150 470,170 C560,186 640,150 700,200 C760,250 740,330 690,360 C660,378 640,420 580,430 C520,440 470,470 410,452 C350,434 300,452 260,420 C214,384 232,330 215,300 C205,282 196,270 210,250 Z";
 
-/* Live config. Each persona: scope, lens, a destination-level read (bottom strip at LOD1),
-   and places. Each place carries an area read (bottom strip at LOD2) and a site read
-   (LOD3 left panel) plus cameras (LOD3 right CCTV grid).
-   ENV place reads include sustainability (per asset). MO destination read includes the
-   operational-impact chips (wind -> marine). */
-const LIVE = {
-  GXM:{ scope:"Shura Island", label:"Guest Experience",
-    lens:"Guest movement and transfers across the destination.",
-    dest:{ status:"safe", hero:["Avg transfer wait","3.4","min","within the 6 min target"],
-      kpis:[["Guests on the move","1,240"],["Transfer requests","38 open"],["Fleet in service","46 of 52"],["Satisfaction","4.4 of 5"]] },
+/* ── Per-persona config, contextual to each domain ──
+   feed         : data-input name in the map legend
+   severity     : [crit,high,med,low] counts
+   icon         : glyph for the bottom-strip persona header
+   phases       : the bottom-strip organizing frame for THIS persona (contextual, not copied)
+   dest/areas   : bottom-strip metric groups for LOD1 (dest) and LOD2 (per area), keyed by phase
+   sites        : LOD3 detail: analysis-window options, left-panel sections, alert, cameras
+   places       : map markers used for navigation + severity dots
+*/
+const P = {
+  GXM:{
+    role:"Guest Experience Manager", feed:"Guest Experience Feed", icon:"&#128188;",
+    severity:[0,1,2,8], scope:"Shura Island",
+    phases:["Pre-Trip","Trip","After-Trip"],
+    dest:{
+      "Pre-Trip":[
+        {type:"m",l:"Transfer variance",v:"+18",u:"%",s:["vs planned 240/hr",""]},
+        {type:"m",l:"Booking requests",v:"412",s:["last 60 min",""]},
+        {type:"m",l:"Available vehicles",v:"6",u:"/12",s:["Marina assigned",""]},
+        {type:"list",t:"Top stations",rows:[["Marina","86"],["Turtle Bay Arrival","61"],["Spine Corridor","48"]]}
+      ],
+      "Trip":[
+        {type:"m",l:"Guest travelling",v:"186",s:["in transit now",""]},
+        {type:"dist",t:"Vehicle type mix",u:[["22","Buggy"],["9","Shuttle"],["5","Bus"],["4","Boat"],["3","Bike"]]}
+      ],
+      "After-Trip":[
+        {type:"m",l:"Avg travel distance",v:"2.4",u:"km",s:["per trip today",""]},
+        {type:"m",l:"Avg travel time",v:"8.4",u:"min",s:["door to door",""]},
+        {type:"m",l:"Satisfaction",v:"92",u:"%",s:["Satisfied","up"]}
+      ]
+    },
+    areas:{
+      "Marina District":{
+        "Pre-Trip":[
+          {type:"m",l:"Transfer variance",v:"+42",u:"%",s:["vs planned 240/hr",""]},
+          {type:"m",l:"Booking requests",v:"86",s:["last 60 min",""]},
+          {type:"m",l:"Available vehicles",v:"4",u:"/12",s:["Marina assigned",""]},
+          {type:"list",t:"Top stations",rows:[["Marina Arrival","38"],["Marina Boardwalk","27"],["Marina Boat Slip","21"]]}
+        ],
+        "Trip":[
+          {type:"m",l:"Guest travelling",v:"32",s:["in transit now",""]},
+          {type:"dist",t:"Vehicle type mix",u:[["11","Buggy"],["4","Shuttle"],["3","Bus"],["3","Boat"]]}
+        ],
+        "After-Trip":[
+          {type:"m",l:"Avg travel distance",v:"1.4",u:"km",s:["per trip today",""]},
+          {type:"m",l:"Avg travel time",v:"9.4",u:"min",s:["door to door",""]},
+          {type:"m",l:"Satisfaction",v:"92",u:"%",s:["Satisfied","up"]}
+        ]
+      }
+    },
+    sites:{
+      "Marina":{
+        window:["Now","Daily","Weekly"],
+        left:[
+          {sect:"Pre-Trip",blocks:[
+            {t:"big",l:"Mobility guest transfers variance",v:"264",u:"transfers",s:["+8.4% vs forecast","up"]},
+            {t:"pair",items:[["Booking request","42","of 58"],["Available vehicles","137","req"]]},
+            {t:"list",lt:"Top stations / slots requesting",rows:[["Marina","38"],["Turtle Bay Beach Club","29"],["MTB Arrival","21"]]},
+            {t:"list",lt:"Request time age per station",rows:[["Marina","4m 12s"],["Turtle Bay Beach Club","6m 38s"],["MTB Arrival","3m 5s"]]}
+          ]},
+          {sect:"Trip - Movement",blocks:[
+            {t:"big",l:"Guest travelling",v:"318",u:"pax"},
+            {t:"dist",lt:"Vehicle types distribution",r:"%",u:[["46","Buggy"],["28","Shuttle"],["14","Bus"],["9","Boat"],["3","Bike"]]},
+            {t:"dist",lt:"Guests per vehicle type",u:[["146","Buggy"],["89","Shuttle"],["44","Bus"],["29","Boat"],["10","Bike"]]}
+          ]}
+        ],
+        alert:{lvl:"crit",t:"Route Anomaly",s:"Trip over expected time"},
+        camLoc:"Marina", camCount:"92 cameras",
+        featured:["Marina","CA-01"],
+        cams:[["Spine Corridor","ML-01"],["Marina Promenade","IB-03"],["Tower Apex, L8","IO-04"],["Pool Bay, L2","P-05"],["Link Terrace, L3","SLT-06"],["Links Roof, L4","SLR-02"],["Links Gym, L1","SLG-08"],["Main Pool, L2","MPD-09"],["SLS Porte, GF","SLS-E-10"],["Beach Lounge, GF","BL-11"],["Causeway Mid, GF","CS-15"],["Bridge IB, GF","BI-16"]]
+      }
+    },
     places:[
-      {name:"Shura Marina", x:300,y:300, status:"watch",
-       hero:["Transfer demand","214","vs 150 cap","11 vehicles free, oldest wait 8 min"],
-       kpis:[["Boats in service","28 of 34"],["Oldest request","8 min"],["Wait at berth","Rising"],["Satisfaction","4.1 of 5"]],
-       alerts:[["watch","Transfer demand above capacity","6 more boats would clear the backlog"]],
-       cams:["Marina Promenade","Berth 4","Arrival Hall","Jetty East"]},
-      {name:"Spine Corridor", x:470,y:320, status:"safe",
-       hero:["Buggy load","5 of 6","seats","318 guests moving, flow smooth"],
-       kpis:[["Buggies running","22"],["Avg wait","2.1 min"],["Flow","Smooth"],["Satisfaction","4.5 of 5"]],
-       alerts:[["info","Corridor flowing normally","No pooling needed"]],
-       cams:["Corridor Mid","Buggy Stop 2","North Gate"]},
-      {name:"Villas", x:600,y:280, status:"safe",
-       hero:["Arrival travel time","6.3","min","on target"],
-       kpis:[["Groups arriving","4"],["Longest leg","Marina to villas"],["Flow","Smooth"],["Satisfaction","4.3 of 5"]],
-       alerts:[["info","Arrivals on schedule","Marina to villas leg nominal"]],
-       cams:["Villa Drop-off","Reception","Garden Path"]}
+      {name:"Marina",x:300,y:300,sev:"med",area:"Marina District",site:"Marina"},
+      {name:"Spine Corridor",x:470,y:320,sev:"low",area:"Marina District",site:"Marina"},
+      {name:"Turtle Bay",x:600,y:360,sev:"high",area:"Marina District",site:"Marina"}
     ]
   },
-  OPS:{ scope:"Shura Island", label:"Operations",
-    lens:"Fleet, chargers, and site operations across the destination.",
-    dest:{ status:"safe", hero:["Fleet utilization","74","%","18 of 24 buggies active"],
-      kpis:[["Buggies in service","18 of 24"],["EV chargers free","84%"],["Safety flags","2 open"],["Idle assets","5"]] },
+
+  OPS:{
+    role:"Operations Manager", feed:"Operations Feed", icon:"&#9881;",
+    severity:[0,2,3,6], scope:"Shura Island",
+    phases:["Fleet","Charging","Safety"],
+    dest:{
+      "Fleet":[
+        {type:"m",l:"Fleet utilization",v:"74",u:"%",s:["18 of 24 active",""]},
+        {type:"m",l:"Idle assets",v:"5",s:["under-used",""]},
+        {type:"list",t:"Busiest sites",rows:[["Turtle Bay","44"],["Causeway","31"],["Spine Corridor","22"]]}
+      ],
+      "Charging":[
+        {type:"m",l:"Chargers free",v:"84",u:"%",s:["fleet-wide",""]},
+        {type:"m",l:"Charge load",v:"Normal",s:["within capacity",""]}
+      ],
+      "Safety":[
+        {type:"m",l:"Open safety flags",v:"2",s:["helmet, tailgating","down"]},
+        {type:"m",l:"Marshals on shift",v:"6",s:["deployed",""]}
+      ]
+    },
+    areas:{
+      "Turtle Bay District":{
+        "Fleet":[
+          {type:"m",l:"Fleet availability",v:"18",u:"/24",s:["at 2 of 6 seats",""]},
+          {type:"m",l:"Idle pods",v:"1",s:["reassignable",""]},
+          {type:"list",t:"Under-used assets",rows:[["Buggies","5"],["Sedans","4 queued"],["Pods","1 idle"]]}
+        ],
+        "Charging":[
+          {type:"m",l:"Chargers free",v:"84",u:"%",s:["Turtle Bay row",""]},
+          {type:"m",l:"EVs under 65%",v:"2",s:["route after drop-off",""]}
+        ],
+        "Safety":[
+          {type:"m",l:"Safety flags",v:"Rising",s:["causeway queue",""]},
+          {type:"m",l:"Bridge status",v:"Tailgating",s:["monitor",""]}
+        ]
+      }
+    },
+    sites:{
+      "Turtle Bay":{
+        window:["Now","Daily","Weekly"],
+        left:[
+          {sect:"Fleet",blocks:[
+            {t:"big",l:"Fleet availability",v:"18",u:"of 24",s:["running at 2 of 6 seats",""]},
+            {t:"pair",items:[["Idle pods","1",""],["Queue","4","sedans"]]},
+            {t:"list",lt:"Utilization by asset",rows:[["Buggies","18 of 24"],["Sedans","4 queued"],["Pods","1 idle"]]}
+          ]},
+          {sect:"Charging",blocks:[
+            {t:"big",l:"Chargers free",v:"84",u:"%"},
+            {t:"pair",items:[["EVs under 65%","2",""],["Charge load","Normal",""]]}
+          ]},
+          {sect:"Safety and Compliance",blocks:[
+            {t:"list",lt:"Open flags",rows:[["Helmet","Bridge deck"],["Tailgating","Rising"],["Marshal","Not assigned"]]}
+          ]}
+        ],
+        alert:{lvl:"crit",t:"Over-capacity buggy",s:"Causeway queue, 7 of 6 seats"},
+        camLoc:"Turtle Bay", camCount:"64 cameras",
+        featured:["Bay Forecourt","TB-01"],
+        cams:[["Charger Row","TC-02"],["Reception","TR-03"],["Service Yard","TS-04"],["Causeway West","CW-05"],["Bridge Deck","BD-06"],["Queue Point","QP-07"],["L1 Floor Plate","IO-08"],["L2 Floor Plate","IO-09"],["Lobby","LB-10"],["Plant Room","PR-11"],["Charge Bay 2","TC-12"],["Drop-off","DO-13"]]
+      }
+    },
     places:[
-      {name:"Turtle Bay", x:560,y:360, status:"watch",
-       hero:["Fleet availability","18 of 24","at 2 of 6 seats","pooling frees about 6"],
-       kpis:[["Chargers free","84%"],["Idle pods","1"],["Safety flags","Helmet, tailgating"],["Queue","4 sedans"]],
-       alerts:[["watch","Buggies running under-filled","Pool reception trips to free about 6 vehicles"]],
-       cams:["Bay Forecourt","Charger Row","Reception","Service Yard"]},
-      {name:"Causeway", x:410,y:400, status:"risk",
-       hero:["Buggy load","7 of 6","over capacity","helmet flags rising"],
-       kpis:[["Safety flags","Rising"],["Bridge","Tailgating"],["Marshal","Not assigned"],["Queue","Building"]],
-       alerts:[["risk","Over-capacity buggy on the causeway","Send a safety marshal to the queue"]],
-       cams:["Causeway West","Bridge Deck","Queue Point"]},
-      {name:"IOC Building", x:640,y:300, status:"safe",
-       hero:["Floor temperature","22.3","C","nominal across plate"],
-       kpis:[["Occupancy","Moderate"],["HVAC","Nominal"],["District cooling","Within load"],["Cameras","All reporting"]],
-       alerts:[["info","Building interior nominal","HVAC and cooling within setpoints"]],
-       cams:["L1 Floor Plate","L2 Floor Plate","Lobby","Plant Room"]}
+      {name:"Turtle Bay",x:560,y:360,sev:"med",area:"Turtle Bay District",site:"Turtle Bay"},
+      {name:"Causeway",x:410,y:400,sev:"crit",area:"Turtle Bay District",site:"Turtle Bay"},
+      {name:"IOC Building",x:640,y:300,sev:"low",area:"Turtle Bay District",site:"Turtle Bay"}
     ]
   },
-  ENV:{ scope:"Shura Island", label:"Environment",
-    lens:"Air, wind, and water across the destination, plus per-asset sustainability.",
-    dest:{ status:"safe", hero:["Water quality index","8.6","of 10","Clear"],
-      kpis:[["Air quality","88, Moderate"],["Wind","3.6 m/s NW"],["Turbidity","2.4 NTU"],["Dissolved O2","96%"]] },
+
+  ENV:{
+    role:"Environment Manager", feed:"Environment Feed", icon:"&#127807;",
+    severity:[0,1,2,9], scope:"Shura Island",
+    phases:["Air & Wind","Water","Sustainability"],
+    dest:{
+      "Air & Wind":[
+        {type:"m",l:"Air quality",v:"88",s:["Moderate (USAQI)",""]},
+        {type:"m",l:"Wind",v:"3.6",u:"m/s",s:["308&deg; NW",""]},
+        {type:"m",l:"PM2.5 / PM10",v:"19 / 52",s:["within range",""]}
+      ],
+      "Water":[
+        {type:"m",l:"Water quality index",v:"8.6",u:"of 10",s:["Clear",""]},
+        {type:"m",l:"Turbidity",v:"2.4",u:"NTU",s:["clear",""]},
+        {type:"m",l:"Dissolved O2",v:"96",u:"%",s:["nominal",""]}
+      ],
+      "Sustainability":[
+        {type:"m",l:"Electricity",v:"428k",u:"kWh",s:["down 6%","down"]},
+        {type:"m",l:"Renewable share",v:"82",u:"%",s:["up 4 pts","up"]},
+        {type:"m",l:"Est. CO2",v:"61",u:"t",s:["down 9%","down"]}
+      ]
+    },
+    areas:{
+      "Lagoon East District":{
+        "Air & Wind":[
+          {type:"m",l:"Air quality",v:"84",s:["Moderate",""]},
+          {type:"m",l:"Wind",v:"3.2",u:"m/s",s:["NW",""]}
+        ],
+        "Water":[
+          {type:"m",l:"Colour index",v:"81",s:["vs 94 baseline","down"]},
+          {type:"m",l:"Turbidity",v:"3.1",u:"NTU",s:["watch",""]},
+          {type:"m",l:"Monitoring assets",v:"41",u:"/43",s:["LG-04 offline",""]}
+        ],
+        "Sustainability":[
+          {type:"m",l:"Electricity",v:"301k",u:"kWh",s:["down 8%","down"]},
+          {type:"m",l:"Water use",v:"2,980",u:"m3",s:["down 4%","down"]}
+        ]
+      }
+    },
+    sites:{
+      "Lagoon East":{
+        window:["Now","Monthly","Yearly"],
+        left:[
+          {sect:"Conditions",blocks:[
+            {t:"big",l:"Colour index",v:"81",u:"vs 94 baseline",s:["probe LG-04 confirms","down"]},
+            {t:"pair",items:[["Turbidity","3.1","NTU"],["Dissolved O2","91","%"]]},
+            {t:"pair",items:[["pH","8.02",""],["Air quality","Nominal",""]]}
+          ]},
+          {sect:"Monitoring",blocks:[
+            {t:"list",lt:"Asset status",rows:[["Probe LG-04","Offline 6m"],["Reef cam RB-01","Degraded"],["Reporting","41 of 43"]]}
+          ]},
+          {sect:"Sustainability, this asset",blocks:[
+            {t:"sustain",cards:[["Electricity","428,000 kWh","down 6%","down"],["Renewable share","82%","up 4 pts","up"],["Energy intensity","47 kWh/rm-night","down 5%","down"],["Water use","3,940 m3","down 3%","down"],["Water intensity","430 L/guest-night","down 2%","down"],["Waste diverted","68%","up 7 pts","up"],["Est. CO2","61 t","down 9%","down"]]}
+          ]}
+        ],
+        alert:{lvl:"watch",t:"Water anomaly",s:"Colour index down to 81, send marine team"},
+        camLoc:"Lagoon East", camCount:"38 cameras",
+        featured:["Lagoon East","RB-01"],
+        cams:[["Reef Cam RB-01","RB-01"],["Reef Cam RB-02","RB-02"],["Water Station","WS-03"],["Shoreline","SH-04"],["Buoy LG-04","LG-04"],["Restricted Zone","RZ-05"],["Beach North","BN-06"],["Pier","PR-07"],["Air Station","AS-08"],["Wind Mast","WM-09"],["Lagoon West","LW-10"],["Reef Edge","RE-11"]]
+      }
+    },
     places:[
-      {name:"Shura Marina", x:300,y:300, status:"watch",
-       hero:["Colour index","81","vs 94 baseline","probe LG-04 confirms"],
-       kpis:[["Turbidity","3.1 NTU"],["Dissolved O2","91%"],["pH","8.02"],["Air quality","Nominal"]],
-       alerts:[["watch","Water anomaly at Lagoon East","Send a marine team, colour index down to 81"]],
-       cams:["Lagoon East","Reef Cam RB-01","Shoreline","Buoy LG-04"],
-       sustain:[["Electricity","428,000 kWh","down 6%","down"],["Renewable share","82%","up 4 pts","up"],["Energy intensity","47 kWh/room-night","down 5%","down"],["Water use","3,940 m3","down 3%","down"],["Water intensity","430 L/guest-night","down 2%","down"],["Waste diverted","68%","up 7 pts","up"],["Est. CO2","61 t","down 9%","down"]]},
-      {name:"SLS Red Sea", x:520,y:250, status:"risk",
-       hero:["Restricted-area alert","2 people","in reef zone","1 min old"],
-       kpis:[["Water quality","94"],["Camera","RB-02 live"],["Zone","Restricted reef"],["Response","Security called"]],
-       alerts:[["risk","Unauthorized swimmers in a restricted reef zone","Security called, alert 1 minute old"]],
-       cams:["Reef Zone RB-02","Beach North","Pier","Restricted Buoy"],
-       sustain:[["Electricity","512,000 kWh","down 4%","down"],["Renewable share","79%","up 3 pts","up"],["Energy intensity","51 kWh/room-night","down 3%","down"],["Water use","4,610 m3","down 2%","down"],["Water intensity","455 L/guest-night","down 1%","down"],["Waste diverted","64%","up 5 pts","up"],["Est. CO2","74 t","down 6%","down"]]},
-      {name:"Lagoon East", x:600,y:360, status:"watch",
-       hero:["Monitoring assets","41 of 43","reporting","LG-04 offline 6 min"],
-       kpis:[["Probe LG-04","Offline"],["Reef cam RB-01","Degraded"],["Air quality","Nominal"],["Wind","Nominal"]],
-       alerts:[["watch","Monitoring gap at Lagoon East","Send a technician, probe LG-04 offline"]],
-       cams:["Lagoon East","Reef Cam RB-01","Water Station","Shore"],
-       sustain:[["Electricity","301,000 kWh","down 8%","down"],["Renewable share","85%","up 5 pts","up"],["Energy intensity","44 kWh/room-night","down 6%","down"],["Water use","2,980 m3","down 4%","down"],["Water intensity","410 L/guest-night","down 3%","down"],["Waste diverted","71%","up 6 pts","up"],["Est. CO2","48 t","down 11%","down"]]}
+      {name:"Shura Marina",x:300,y:300,sev:"med",area:"Lagoon East District",site:"Lagoon East"},
+      {name:"SLS Red Sea",x:520,y:250,sev:"crit",area:"Lagoon East District",site:"Lagoon East"},
+      {name:"Lagoon East",x:600,y:360,sev:"med",area:"Lagoon East District",site:"Lagoon East"}
     ]
   },
-  MO:{ scope:"North Reef", label:"Marine Operations",
-    lens:"Reef conditions, dive and mooring capacity, and the weather's impact on operations.",
-    dest:{ status:"watch", hero:["Water temperature","29.8","C","toward the 30.5 threshold"],
-      kpis:[["Turbidity","4.6 NTU"],["Boats near reef","11 of 12"],["Moorings in use","17 of 18"],["Wind","14 kn"]],
-      ops:[["Passenger boats","Caution","watch","Wind 14 kn, near the small-craft limit"],
-           ["Seaplanes","Go","safe","Crosswind within limits, visibility clear"],
-           ["Dive operations","Caution","watch","Turbidity 4.6 NTU, near the 5.0 limit"]] },
+
+  MO:{
+    role:"Marine Operations Manager", feed:"Marine Operations Feed", icon:"&#9973;",
+    severity:[0,1,1,7], scope:"North Reef",
+    phases:["Reef","Capacity","Operations"],
+    dest:{
+      "Reef":[
+        {type:"m",l:"Water temperature",v:"29.8",u:"&deg;C",s:["toward 30.5 threshold","down"]},
+        {type:"m",l:"Turbidity",v:"4.6",u:"NTU",s:["near 5.0 limit",""]}
+      ],
+      "Capacity":[
+        {type:"m",l:"Boats near reef",v:"11",u:"/12",s:["near capacity",""]},
+        {type:"m",l:"Moorings in use",v:"17",u:"/18",s:["near full",""]}
+      ],
+      "Operations":[
+        {type:"op",svc:"Passenger boats",verdict:"Caution",cls:"watch",why:"Wind 14 kn, near the small-craft limit"},
+        {type:"op",svc:"Seaplanes",verdict:"Go",cls:"safe",why:"Crosswind within limits, visibility clear"},
+        {type:"op",svc:"Dive operations",verdict:"Caution",cls:"watch",why:"Turbidity 4.6 NTU, near the 5.0 limit"}
+      ]
+    },
+    areas:{
+      "North Reef District":{
+        "Reef":[
+          {type:"m",l:"Water temperature",v:"29.8",u:"&deg;C",s:["Site B rising","down"]},
+          {type:"m",l:"Turbidity",v:"4.9",u:"NTU",s:["Site B watch",""]}
+        ],
+        "Capacity":[
+          {type:"m",l:"Boats at reef",v:"11",s:["holding arrivals",""]},
+          {type:"m",l:"Moorings",v:"17",u:"/18",s:["near full",""]}
+        ],
+        "Operations":[
+          {type:"op",svc:"Dive at Site B",verdict:"Divert",cls:"risk",why:"Turbidity over 5.0, route to Site C"},
+          {type:"op",svc:"Boats",verdict:"Caution",cls:"watch",why:"Wind 15 kn at the reef"}
+        ]
+      }
+    },
+    sites:{
+      "Site B":{
+        window:["Now","Daily","Weekly"],
+        left:[
+          {sect:"Reef",blocks:[
+            {t:"big",l:"Turbidity",v:"5.2",u:"NTU",s:["over the 5.0 threshold","down"]},
+            {t:"pair",items:[["Water temp","29.9","&deg;C"],["Wind","15","kn"]]}
+          ]},
+          {sect:"Capacity",blocks:[
+            {t:"pair",items:[["Boats at site","11",""],["Moorings","B in use",""]]},
+            {t:"list",lt:"Dive status",rows:[["Site B","Diverting"],["Response","Auto-assigned"],["Route to","Site C"]]}
+          ]},
+          {sect:"Operations",blocks:[
+            {t:"list",lt:"Operational impact",rows:[["Dive ops","Cannot operate"],["Boats","Caution"],["Assigned","Marine security"]]}
+          ]}
+        ],
+        alert:{lvl:"crit",t:"Turbidity over threshold",s:"Divert dive groups from Site B to Site C"},
+        camLoc:"Site B", camCount:"22 cameras",
+        featured:["Site B Reef","RC-01"],
+        cams:[["Dive Entry","DE-02"],["Mooring B","MB-03"],["Buoy B-02","BB-02"],["Reef Cam RC-01","RC-01"],["Surface Buoy","SB-04"],["Dive Platform","DP-05"],["North Reef","NR-06"],["Site C Reef","SC-07"],["Mooring C","MC-08"],["Approach","AP-09"],["Channel","CH-10"],["Lagoon","LG-11"]]
+      }
+    },
     places:[
-      {name:"North Reef", x:500,y:300, status:"watch",
-       hero:["Water temperature","29.8","C","toward 30.5 threshold"],
-       kpis:[["Turbidity","4.6 NTU"],["Boats","11 of 12"],["Moorings","17 of 18"],["Wind","14 kn"]],
-       alerts:[["watch","Temperature trending toward breach","Rest Site B, shift afternoon groups to Site C"]],
-       cams:["Reef Cam RC-01","Mooring Field","Dive Platform","Surface Buoy"]},
-      {name:"Site B", x:410,y:360, status:"risk",
-       hero:["Turbidity","5.2","NTU","over the 5.0 threshold"],
-       kpis:[["Boats at site","11"],["Dive status","Diverting"],["Response","Auto-assigned"],["Wind","15 kn"]],
-       alerts:[["risk","Turbidity over threshold at Site B","Divert dive groups to Site C"]],
-       cams:["Site B Reef","Dive Entry","Mooring B","Buoy B-02"]},
-      {name:"Site C", x:600,y:340, status:"safe",
-       hero:["Capacity","6 of 12","boats","room for arrivals"],
-       kpis:[["Turbidity","3.4 NTU"],["Moorings","9 of 18"],["Dive status","Open"],["Wind","13 kn"]],
-       alerts:[["info","Site C open with capacity","Receiving diverted groups from Site B"]],
-       cams:["Site C Reef","Mooring C","Dive Platform"]}
+      {name:"North Reef",x:500,y:300,sev:"med",area:"North Reef District",site:"Site B"},
+      {name:"Site B",x:410,y:360,sev:"crit",area:"North Reef District",site:"Site B"},
+      {name:"Site C",x:600,y:340,sev:"low",area:"North Reef District",site:"Site B"}
     ]
   }
 };
 
 let persona="GXM", lod=1, placeIdx=0;
-const $ = id => document.getElementById(id);
-const sc = s => s==="risk"?"risk":s==="watch"?"watch":"safe";
-const tagTxt = s => s==="risk"?"Action needed":s==="watch"?"Watch":"Stable";
+const $=id=>document.getElementById(id);
+const sevName=["crit","high","med","low"];
+const sevLabel=["Critical","High","Medium","Low/Info"];
 
 function drawIsland(){
   let g="";
@@ -306,130 +568,145 @@ function drawIsland(){
 }
 
 function setViewBox(){
-  const cfg=LIVE[persona];
   if(lod===1){ $("map").setAttribute("viewBox","0 0 900 640"); return; }
-  const p=cfg.places[placeIdx];
-  const w = lod===2 ? 520 : 300;
-  const h = w/(900/640);
-  let x = Math.max(0, Math.min(900-w, p.x - w/2));
-  let y = Math.max(0, Math.min(640-h, p.y - h/2));
+  const p=P[persona].places[placeIdx];
+  const w = lod===2?520:300, h=w/(900/640);
+  const x=Math.max(0,Math.min(900-w,p.x-w/2)), y=Math.max(0,Math.min(640-h,p.y-h/2));
   $("map").setAttribute("viewBox",`${x} ${y} ${w} ${h}`);
 }
 
 function renderMap(){
-  const cfg=LIVE[persona];
+  const cfg=P[persona];
   let pins="";
   cfg.places.forEach((p,i)=>{
-    const active=(lod>1 && i===placeIdx);
-    const r = active?9:6;
-    pins+=`<circle class="pindot ${sc(p.status)}" cx="${p.x}" cy="${p.y}" r="${r}" fill-opacity="${active?0.95:0.55}" data-place="${i}"/>`;
-    pins+=`<text class="pinlbl" x="${p.x+12}" y="${p.y+4}">${p.name}</text>`;
+    const active=(lod>1&&i===placeIdx), r=active?9:6;
+    pins+=`<circle class="sevdot ${p.sev}" cx="${p.x}" cy="${p.y}" r="${r}" fill-opacity="${active?0.95:0.6}" data-place="${i}"/>`;
+    pins+=`<text class="plabel" x="${p.x+12}" y="${p.y+4}">${p.name}</text>`;
   });
   $("gPins").innerHTML=pins;
   setViewBox();
-  // spot bubble on the active place at LOD2/3
   const sl=$("spotLayer");
-  if(lod>1){
-    const p=cfg.places[placeIdx];
-    const px=(p.x/900)*100, py=(p.y/640)*100;
-    sl.innerHTML=`<div class="spot ${sc(p.status)}" style="left:${px}%;top:${py-7}%"><small>${p.name}</small><b>${p.hero[1]} ${p.hero[2]||''}</b></div>`;
+  if(lod===2){
+    const p=cfg.places[placeIdx], px=(p.x/900)*100, py=(p.y/640)*100;
+    sl.innerHTML=`<div class="spot ${p.sev==='crit'||p.sev==='high'?'risk':p.sev==='med'?'watch':''}" style="left:${px}%;top:${py-7}%"><small>${p.name}</small><b>${p.name}</b></div>`;
   } else sl.innerHTML="";
+  // alert card at LOD3
+  if(lod===3){
+    const site=cfg.sites[cfg.places[placeIdx].site];
+    if(site&&site.alert){
+      $("alertCard").className="alertcard "+(site.alert.lvl==="watch"?"watch":"");
+      $("alertCard").innerHTML=`<div class="lvl">${site.alert.lvl==="crit"?"Critical":"Watch"}</div><div class="t">${site.alert.t}</div><div class="s">${site.alert.s}</div>`;
+    }
+  }
 }
 
-function stripCards(read){
-  let html=`<div class="stripcard hero"><div class="cl">${read.hero[0]}</div><div class="cv">${read.hero[1]} <small>${read.hero[2]||''}</small></div></div>`;
-  html+=read.kpis.map(([l,v])=>`<div class="stripcard"><div class="cl">${l}</div><div class="cv">${v}</div></div>`).join("");
-  return html;
+function renderLegend(){
+  const cfg=P[persona];
+  let rows=cfg.severity.map((n,i)=>`<div class="sevrow"><span class="d ${sevName[i]}"></span>${sevLabel[i]}<span class="n">${n}</span></div>`).join("");
+  $("legend").innerHTML=`<div class="lh">Map Legend <span>&#9662;</span></div><div class="sub">Severity</div>${rows}<div class="sub">Data Inputs</div><div class="feedrow">${cfg.feed}<span class="lv">LIVE</span></div>`;
+}
+
+/* bottom-strip metric renderers */
+function bsMetric(m){
+  if(m.type==="m"){
+    const s = m.s ? `<span class="s ${m.s[1]||''}">${m.s[0]}</span>` : "";
+    return `<div class="bsm"><span class="l">${m.l}</span><span class="v">${m.v}${m.u?` <small>${m.u}</small>`:""}</span>${s}</div>`;
+  }
+  if(m.type==="dist"){
+    return `<div class="bsm"><span class="l">${m.t}</span><div class="dist">`+m.u.map(([v,l])=>`<div class="du"><span class="dv">${v}</span><span class="dl">${l}</span></div>`).join("")+`</div></div>`;
+  }
+  if(m.type==="list"){
+    return `<div class="bsm"><span class="l">${m.t}</span><div class="bslist">`+m.rows.map(([n,v])=>`<div class="li"><span class="nm">${n}</span><span class="vl">${v}</span></div>`).join("")+`</div></div>`;
+  }
+  if(m.type==="op"){
+    return `<div class="opchip ${m.cls}"><span class="svc">${m.svc}</span><span class="verdict">${m.verdict}</span><span class="why">${m.why}</span></div>`;
+  }
+  return "";
 }
 
 function renderBottomStrip(){
-  const cfg=LIVE[persona];
-  const atArea = (lod===2);
-  const read = atArea ? cfg.places[placeIdx] : cfg.dest;
-  const name = atArea ? cfg.places[placeIdx].name : cfg.scope;
-  const lens = atArea ? "Area read, scoped to this zone." : cfg.lens;
-  const status = read.status || "safe";
+  const cfg=P[persona];
+  const atArea=(lod===2);
+  const areaName = atArea ? Object.keys(cfg.areas)[0] : null;
+  const groups = atArea ? cfg.areas[areaName] : cfg.dest;
+  const head = `<div class="bshead"><span class="ico">${cfg.icon}</span>${cfg.role.replace(" Manager","").toUpperCase()}${atArea?` <span class="area">&bull; ${areaName}</span>`:""}</div>`;
+  let gh = cfg.phases.map(ph=>{
+    if(!groups[ph]) return "";
+    return `<div class="bsgroup"><div class="bsphase">${ph}</div><div class="bsmetrics">`+groups[ph].map(bsMetric).join("")+`</div></div>`;
+  }).join("");
+  $("bottomStrip").innerHTML = head + `<div class="bsgroups">${gh}</div>`;
+}
 
-  let head=`<div class="striphead"><div class="sh-name">${name}</div><div class="sh-lens">${lens}</div><span class="stripstat ${sc(status)}">${tagTxt(status)}</span></div>`;
-  let cards = stripCards(read);
-  // MO operational-impact chips on the destination read
-  if(persona==="MO" && lod===1 && cfg.dest.ops){
-    cards += cfg.dest.ops.map(([svc,verdict,cls,why])=>
-      `<div class="stripcard op ${cls}"><div class="cl">${svc}</div><div class="verdict">${verdict}</div><div class="why">${why}</div></div>`
-    ).join("");
+/* LOD3 left-panel block renderers */
+function lpBlock(b){
+  if(b.t==="big"){
+    const s=b.s?`<div class="s ${b.s[1]||''}">${b.s[0]}</div>`:"";
+    return `<div class="lp-big"><div class="l">${b.l}</div><div class="v">${b.v}${b.u?` <small>${b.u}</small>`:""}</div>${s}</div>`;
   }
-  $("bottomStrip").innerHTML = head + cards;
+  if(b.t==="pair"){
+    return `<div class="lp-pair">`+b.items.map(([l,v,u])=>`<div><div class="l">${l}</div><div class="v">${v}${u?` <small>${u}</small>`:""}</div></div>`).join("")+`</div>`;
+  }
+  if(b.t==="list"){
+    return `<div class="lp-list"><div class="lt">${b.lt}</div>`+b.rows.map(([n,v])=>`<div class="row"><span class="nm">${n}</span><span class="vl">${v}</span></div>`).join("")+`</div>`;
+  }
+  if(b.t==="dist"){
+    return `<div class="lp-dist"><div class="lt">${b.lt}${b.r?`<span>${b.r}</span>`:""}</div><div class="units">`+b.u.map(([v,l])=>`<div class="u"><span class="uv">${v}</span><span class="ul">${l}</span></div>`).join("")+`</div></div>`;
+  }
+  if(b.t==="sustain"){
+    return `<div class="lp-sustain">`+b.cards.map(([l,v,d,dir])=>`<div class="sustaincard"><div class="l">${l}</div><div class="v">${v}</div><div class="s ${dir}">${d}</div></div>`).join("")+`</div>`;
+  }
+  return "";
 }
 
 function renderLeftPanel(){
-  const cfg=LIVE[persona], p=cfg.places[placeIdx];
-  let h=`<div class="rotitle"><div class="rt-name">${p.name}</div><div class="rt-sub">${cfg.label} · single site, live</div></div>`;
-  h+=`<div class="hero"><div class="hl">${p.hero[0]}</div><div class="hv">${p.hero[1]} <small>${p.hero[2]||''}</small></div><div class="delta">${p.hero[3]||''}</div></div>`;
-  h+=`<div class="sect">Live readings</div><div class="kpis">`;
-  h+=p.kpis.map(([l,v])=>`<div class="kpi"><div class="kl">${l}</div><div class="kv">${v}</div></div>`).join("");
-  h+=`</div>`;
-  if(persona==="ENV" && p.sustain){
-    h+=`<div class="sect">Sustainability, this asset</div><div class="kpis">`;
-    h+=p.sustain.map(([l,v,d,dir])=>`<div class="kpi"><div class="kl">${l}</div><div class="kv">${v}</div><div class="kd ${dir}">${d}</div></div>`).join("");
-    h+=`</div>`;
-  }
-  h+=`<div class="sect">Alerts and activity</div>`;
-  h+=(p.alerts||[]).map(([lvl,t,s])=>`<div class="alert ${lvl}"><span class="dot"></span><div><div class="at">${t}</div><div class="ah">${s}</div></div></div>`).join("");
-  h+=`<button class="simentry" id="simEntry">Run simulation for ${p.name} &rarr;</button>`;
+  const cfg=P[persona], site=cfg.sites[cfg.places[placeIdx].site], sname=cfg.places[placeIdx].name;
+  let h=`<div class="lp-head"><div class="lp-role">${cfg.role}</div><div class="lp-site">&#128205; ${sname.toUpperCase()}</div></div>`;
+  h+=`<div class="lp-sect" style="border:none;padding:0;margin:0 0 6px">Analysis window</div><div class="analysiswin" id="awin">`+site.window.map((w,i)=>`<div class="awbtn ${i===0?'on':''}" data-w="${i}">${w}</div>`).join("")+`</div>`;
+  site.left.forEach(sec=>{
+    h+=`<div class="lp-sect">${sec.sect}</div>`;
+    sec.blocks.forEach(b=>h+=lpBlock(b));
+  });
+  h+=`<button class="simentry" id="simEntry">Run simulation for ${sname} &rarr;</button>`;
   $("leftPanel").innerHTML=h;
+  $("awin").addEventListener("click",e=>{const b=e.target.closest(".awbtn");if(!b)return;document.querySelectorAll("#awin .awbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");});
   const se=$("simEntry");
-  if(se) se.addEventListener("click",()=>alert("Opening simulation for "+p.name+".\n\nIn the deployed product this hands off to the forecast tool (sim.rsg) scoped to this site."));
+  if(se) se.addEventListener("click",()=>alert("Opening simulation for "+sname+".\n\nIn the deployed product this hands off to the forecast tool (sim.rsg) scoped to this site."));
 }
 
 function renderRightPanel(){
-  const cfg=LIVE[persona], p=cfg.places[placeIdx];
-  const cams = p.cams||["Camera 1","Camera 2","Camera 3","Camera 4"];
-  let h=`<div class="cctvhead">Camera feeds · ${p.name}</div><div class="cctvgrid">`;
-  cams.forEach(c=>{
-    h+=`<div class="cam"><div class="frame">&#9673;</div><div class="live"><b></b>LIVE</div><div class="cl">${c}</div></div>`;
-  });
-  h+=`</div><div class="note">Feeds shown are placeholders for this preview. In deployment these are the live CCTV and reef cameras nearest the selected site.</div>`;
+  const cfg=P[persona], site=cfg.sites[cfg.places[placeIdx].site];
+  let h=`<div class="cctv-head"><span class="ct">CCTV</span><span class="ctl"><span class="cctv-pill">&#9678; Auto Roaming</span><span class="cctv-pill">&#9673; Virtual Patrol</span></span></div>`;
+  h+=`<div class="cctv-crumb">RSG &rsaquo; <b>${cfg.scope.toUpperCase()}</b></div>`;
+  h+=`<div class="cctv-search"><span class="box">&#9906; Search CCTV</span><span class="cnt">&#9638; 18</span></div>`;
+  h+=`<div class="cctv-loc"><b>${site.camLoc}</b><span>${site.camCount}</span></div>`;
+  h+=`<div class="cam"><div class="frame">&#9673;</div><div class="live"><b></b>LIVE</div><div class="meta"><div class="nm">${site.featured[0]}</div><div class="cd">${site.featured[1]}</div></div></div>`;
+  h+=`<div class="camgrid">`+site.cams.map(([n,c])=>`<div class="cam"><div class="frame">&#9673;</div><div class="live"><b></b>LIVE</div><div class="meta"><div class="nm">${n}</div><div class="cd">${c}</div></div></div>`).join("")+`</div>`;
+  h+=`<div class="cctv-pag"><span>Previous</span><span class="pg on">1</span><span class="pg">2</span><span class="pg">3</span><span>Next</span></div>`;
   $("rightPanel").innerHTML=h;
 }
 
 function renderTop(){
   $("lodChip").textContent="LOD "+lod;
-  $("scopeChip").textContent=LIVE[persona].scope;
-  const name = lod>1 ? LIVE[persona].places[placeIdx].name : LIVE[persona].scope;
+  const name = lod>1 ? (lod===3?P[persona].places[placeIdx].name:Object.keys(P[persona].areas)[0]) : P[persona].scope;
   $("viewing").innerHTML=`Viewing <b>${name}</b>`;
-  document.querySelectorAll(".lodbtn").forEach(b=>b.classList.toggle("on", +b.dataset.lod===lod));
+  document.querySelectorAll(".lodbtn").forEach(b=>b.classList.toggle("on",+b.dataset.lod===lod));
 }
 
 function render(){
-  $("app").className = "app lod"+lod;
-  renderMap();
-  renderTop();
+  $("app").className="app lod"+lod;
+  renderMap(); renderLegend(); renderTop();
   if(lod===3){ renderLeftPanel(); renderRightPanel(); }
   else renderBottomStrip();
 }
 
-// interactions
 document.querySelectorAll(".ptab").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".ptab").forEach(x=>x.classList.remove("on"));
   b.classList.add("on"); persona=b.dataset.p; lod=1; placeIdx=0; render();
 }));
-$("lodSel").addEventListener("click",e=>{
-  const b=e.target.closest(".lodbtn"); if(!b) return;
-  lod=+b.dataset.lod; render();
-});
-$("gPins").addEventListener("click",e=>{
-  const t=e.target.closest("[data-place]"); if(!t) return;
-  placeIdx=+t.dataset.place;
-  if(lod===1) lod=2;         // first drill from destination goes to area
-  else if(lod===2) lod=3;    // drilling again goes to the site
-  render();
-});
+$("lodSel").addEventListener("click",e=>{const b=e.target.closest(".lodbtn");if(!b)return;lod=+b.dataset.lod;render();});
+$("gPins").addEventListener("click",e=>{const t=e.target.closest("[data-place]");if(!t)return;placeIdx=+t.dataset.place;if(lod===1)lod=2;else if(lod===2)lod=3;render();});
 
-function tickClock(){
-  const d=new Date();
-  const p=n=>String(n).padStart(2,"0");
-  $("clock").textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} AST`;
-}
+function tickClock(){const d=new Date();const p=n=>String(n).padStart(2,"0");$("clock").textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} AST`;}
 setInterval(tickClock,1000);
 
 drawIsland(); render(); tickClock();
